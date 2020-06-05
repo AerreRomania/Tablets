@@ -103,7 +103,18 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                var sector = _settingsService.UserSectorSettings == "Confection" ? 1 : 2;
+                var strSector = _settingsService.UserSectorSettings;
+                int sector = 0;
+                if (strSector == "Confection")
+                    sector = 1;
+                else if (strSector == "Stiro")
+                    sector = 2;
+                else if (strSector == "Ramendo")
+                    sector = 6;
+                else if (strSector == "Tessitura")
+                    sector = 7;
+                else if (strSector == "Sartoria")
+                    sector = 8;
 
                 Machines = (await _masiniService.GetMachinesAsync(sector, _settingsService.UserLineSettings)).ToObservableCollection();
 
