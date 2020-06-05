@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SmartB.Core.Views.HomeView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:button="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+    xmlns:dataTemplateSelector="clr-namespace:SmartB.Core.DataTemplateSelector;assembly=SmartB.Core"
+    xmlns:listview="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+    xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
+    xmlns:xForms="clr-namespace:Syncfusion.SfAutoComplete.XForms;assembly=Syncfusion.SfAutoComplete.XForms"
+    utility:ViewModelLocator.AutoWireViewModel="True"
+    NavigationPage.HasBackButton="False">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <DataTemplate x:Key="default">
+                <ViewCell>
+                    <Grid>
+                        <Label
+                            FontSize="22"
+                            Text="{Binding CodeAndName}"
+                            TextColor="Green" />
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+            <DataTemplate x:Key="specific">
+                <ViewCell>
+                    <Grid>
+                        <Label
+                            BackgroundColor="LightGray"
+                            FontSize="22"
+                            Text="{Binding CodeAndName}"
+                            TextColor="Crimson" />
+                    </Grid>
+                </ViewCell>
+            </DataTemplate>
+
+            <dataTemplateSelector:MachineDataTemplateSelector
+                x:Key="MachineDataTemplateSelector"
+                DefaultTemplate="{StaticResource default}"
+                SpecificDataTemplate="{StaticResource specific}" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+        <StackLayout>
+
+            <StackLayout x:Name="BasicInfo" Margin="5">
+                <StackLayout HorizontalOptions="Center">
+                    <button:SfButton
+                        BackgroundColor="WhiteSmoke"
+                        Command="{Binding RefreshData}"
+                        CornerRadius="10"
+                        HasShadow="True"
+                        Text="Refresh"
+                        TextColor="Black"
+                        WidthRequest="150" />
+                    <Label
+                        FontFamily="Verdana"
+                        FontSize="40"
+                        HorizontalOptions="Start"
+                        Text="{Binding EmployeeName}" />
+                </StackLayout>
+                <BoxView
+                    BackgroundColor="Gray"
+                    HeightRequest="2"
+                    Color="Gray" />
+                <Label
+                    FontFamily="Verdana"
+                    FontSize="25"
+                    Text="{Binding Sector}"
+                    TextColor="Black" />
+                <Label
+                    FontFamily="Verdana"
+                    FontSize="25"
+                    Text="{Binding Line}"
+                    TextColor="Black" />
+                <BoxView
+                    BackgroundColor="Gray"
+                    HeightRequest="2"
+                    Color="Gray" />
+            </StackLayout>
+
+            <StackLayout Margin="5,0,0,0">
+                <StackLayout Orientation="Horizontal">
+                    <xForms:SfAutoComplete
+                        x:Name="AutoCompleteMachine"
+                        AutoCompleteMode="SuggestAppend"
+                        DataSource="{Binding Machines}"
+                        DisplayMemberPath="CodeAndName"
+                        IsSelectedItemsVisibleInDropDown="False"
+                        ItemTemplate="{StaticResource MachineDataTemplateSelector}"
+                        Keyboard="Numeric"
+                        MaximumDropDownHeight="200"
+                        NoResultsFoundText="No Results Found"
+                        SelectedItem="{Binding SelectedMachine, Mode=TwoWay}"
+                        SuggestionMode="Contains"
+                        TextHighlightMode="FirstOccurrence"
+                        TextSize="23"
+                        VerticalOptions="StartAndExpand"
+                        Watermark="Select Machine"
+                        WidthRequest="400" />
+
+                    <button:SfButton
+                        BackgroundColor="Gray"
+                        BorderColor="Crimson"
+                        BorderWidth="1"
+                        Command="{Binding ScanCommand}"
+                        CornerRadius="10"
+                        FontSize="20"
+                        HasShadow="True"
+                        HorizontalOptions="Center"
+                        Text="Scan Barcode"
+                        VerticalOptions="Center" />
+                </StackLayout>
+
+                <StackLayout Orientation="Horizontal">
+                    <xForms:SfAutoComplete
+                        x:Name="AutoCompleteOrder"
+                        AutoCompleteMode="SuggestAppend"
+                        DataSource="{Binding Orders}"
+                        DisplayMemberPath="NrComanda"
+                        IsSelectedItemsVisibleInDropDown="False"
+                        Keyboard="Numeric"
+                        MaximumDropDownHeight="200"
+                        NoResultsFoundText="No Results Found"
+                        SelectedItem="{Binding SelectedOrder, Mode=TwoWay}"
+                        SuggestionMode="Contains"
+                        TextHighlightMode="FirstOccurrence"
+                        TextSize="23"
+                        VerticalOptions="StartAndExpand"
+                        Watermark="Select Comessa"
+                        WidthRequest="400" />
+
+
+                    <button:SfButton
+                        BackgroundColor="Gray"
+                        BorderColor="Crimson"
+                        BorderWidth="1"
+                        Command="{Binding ScanCommand}"
+                        CornerRadius="10"
+                        FontSize="20"
+                        HasShadow="True"
+                        HorizontalOptions="Center"
+                        Text="Scan Barcode"
+                        VerticalOptions="Center" />
+                </StackLayout>
+            </StackLayout>
+
+            <Label
+                Margin="5"
+                FontSize="23"
+                Text="{Binding Article.Articol}"
+                TextColor="Black" />
+            <StackLayout>
+                <listview:SfListView
+                    Margin="20,0,0,0"
+                    AutoFitMode="DynamicHeight"
+                    ItemsSource="{Binding Phases}"
+                    SelectedItem="{Binding SelectedPhase}"
+                    SelectionGesture="Tap"
+                    SelectionMode="Single">
+
+                    <listview:SfListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid x:Name="grid" BackgroundColor="White">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Label
+                                    FontSize="23"
+                                    Text="{Binding Operatie}"
+                                    TextColor="Black" />
+                            </Grid>
+                        </DataTemplate>
+                    </listview:SfListView.ItemTemplate>
+                    <listview:SfListView.SelectedItemTemplate>
+                        <DataTemplate>
+                            <StackLayout
+                                x:Name="grid"
+                                BackgroundColor="Gray"
+                                Orientation="Horizontal">
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    FontSize="23"
+                                    Text="{Binding Operatie}"
+                                    TextColor="White" />
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    FontSize="19"
+                                    Text="  Capi/Ora:"
+                                    TextColor="White" />
+                                <Label
+                                    Grid.Row="1"
+                                    Grid.Column="2"
+                                    FontSize="19"
+                                    Text="{Binding BucatiOra}"
+                                    TextColor="White" />
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    FontSize="19"
+                                    Text="  Click Worth:"
+                                    TextColor="White" />
+                                <Label
+                                    Grid.Row="3"
+                                    Grid.Column="2"
+                                    FontSize="19"
+                                    Text="{Binding BucatiButon}"
+                                    TextColor="White" />
+                            </StackLayout>
+                        </DataTemplate>
+                    </listview:SfListView.SelectedItemTemplate>
+                </listview:SfListView>
+
+                <button:SfButton
+                    BackgroundColor="Gray"
+                    BorderColor="Crimson"
+                    BorderWidth="1"
+                    Command="{Binding AddJobCommand}"
+                    CornerRadius="10"
+                    FontSize="23"
+                    HasShadow="True"
+                    HorizontalOptions="Center"
+                    Text="Continue"
+                    VerticalOptions="Center"
+                    WidthRequest="300" />
+            </StackLayout>
+
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

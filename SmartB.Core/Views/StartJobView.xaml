@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SmartB.Core.Views.StartJobView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:button="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+    xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
+    utility:ViewModelLocator.AutoWireViewModel="True"
+    NavigationPage.HasBackButton="False">
+    <ContentPage.Content>
+        <StackLayout>
+
+            <StackLayout Margin="3,0,0,5" Orientation="Horizontal">
+                <Label FontSize="20" Text="Machine " />
+                <Label FontSize="20" Text="{Binding Machine}" />
+            </StackLayout>
+            <StackLayout Margin="3,0,0,5" Orientation="Horizontal">
+                <Label FontSize="20" Text="Commessa " />
+                <Label FontSize="20" Text="{Binding Order}" />
+            </StackLayout>
+            <StackLayout Margin="3,0,0,5" Orientation="Horizontal">
+                <Label FontSize="20" Text="Phase " />
+                <Label FontSize="20" Text="{Binding Phase}" />
+            </StackLayout>
+
+            <button:SfButton
+                Margin="0,0,0,20"
+                BackgroundColor="LightGray"
+                BorderColor="Crimson"
+                BorderWidth="1"
+                Command="{Binding StartJob}"
+                CornerRadius="10"
+                FontSize="30"
+                HasShadow="True"
+                HorizontalOptions="Center"
+                Text="Start"
+                TextColor="Black"
+                VerticalOptions="Center"
+                WidthRequest="150" />
+
+            <button:SfButton
+                BackgroundColor="LightGray"
+                BorderColor="Crimson"
+                BorderWidth="1"
+                Command="{Binding CancelJob}"
+                CornerRadius="10"
+                FontSize="30"
+                HasShadow="True"
+                HorizontalOptions="Center"
+                Text="Cancel"
+                TextColor="Black"
+                VerticalOptions="Center"
+                WidthRequest="150" />
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

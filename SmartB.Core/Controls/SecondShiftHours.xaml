@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartB.Core.Controls.SecondShiftHours">
+    <ContentView.Resources>
+        <ResourceDictionary>
+
+            <x:String x:Key="FormatDecimalZeroPlaces">{0:0.0}</x:String>
+            
+            <Style x:Key="LabelHeaderStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="WhiteSmoke"/>
+                <Setter Property="BackgroundColor" Value="Crimson"/>
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Start"/>
+            </Style>
+            <Style x:Key="LabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="FontSize" Value="20"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="End"/>
+            </Style>
+
+            <Style x:Key="FrameStyle" TargetType ="Frame">
+                <Setter Property="BackgroundColor" Value="White"/>
+                <Setter Property="BorderColor" Value="Crimson"/>
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+            <Style x:Key="BoxStyle" TargetType ="BoxView">
+                <Setter Property="BackgroundColor" Value="Crimson"/>
+                <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+                <Setter Property="HeightRequest" Value="2"/>
+            </Style>
+            <Style x:Key="EfficiencyLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Start"/>
+                <Setter Property="Margin" Value="5,0,0,5"/>
+            </Style>
+            <Style x:Key="PercentLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalTextAlignment" Value="Start"/>
+                <Setter Property="Margin" Value="0,0,5,5"/>
+            </Style>
+            <Style x:Key="FlexLayoutStyle" TargetType="FlexLayout">
+                <Setter Property="Direction" Value="Column"/>
+                <Setter Property="AlignItems" Value="Stretch"/>
+                <Setter Property="JustifyContent" Value="Start"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <StackLayout Orientation="Horizontal" Spacing="5" Margin="10">
+
+
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H15LabelHeader" Text="15" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H15Label" Style="{StaticResource LabelStyle}"  />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout  Orientation="Horizontal" Spacing="0" >
+                        <Label x:Name="H15LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}" />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+                </FlexLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H16LabelHeader"  Text="16" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H16Label" Style="{StaticResource LabelStyle}" />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout Orientation="Horizontal" Spacing="0" >
+                        <Label x:Name="H16LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}"  />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+                </FlexLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H17LabelHeader" Text="17" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H17Label" Style="{StaticResource LabelStyle}" />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout Orientation="Horizontal" Spacing="0">
+                        <Label x:Name="H17LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}"  />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+                </FlexLayout>
+            </Frame>
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H18LabelHeader"  Text="18" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H18Label" Style="{StaticResource LabelStyle}" />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout Orientation="Horizontal" Spacing="0">
+                        <Label x:Name="H18LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}"  />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+
+                </FlexLayout>
+            </Frame>
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H19LabelHeader" Text="19" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H19Label" Style="{StaticResource LabelStyle}" />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout Orientation="Horizontal">
+                        <Label x:Name="H19LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}" />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+                </FlexLayout>
+            </Frame>
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H20LabelHeader" Text="20" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H20Label" Style="{StaticResource LabelStyle}" />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout Orientation="Horizontal" Spacing="0">
+                        <Label x:Name="H20LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}" />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+                </FlexLayout>
+            </Frame>
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H21LabelHeader" Text="21" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H21Label" Style="{StaticResource LabelStyle}" />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout Orientation="Horizontal" Spacing="0">
+                        <Label x:Name="H21LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}"  />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+                </FlexLayout>
+            </Frame>
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H22LabelHeader" Text="22" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H22Label" Style="{StaticResource LabelStyle}" />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout Orientation="Horizontal" Spacing="0">
+                        <Label x:Name="H22LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}" />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+                </FlexLayout>
+            </Frame>
+            <Frame Style="{StaticResource FrameStyle}">
+                <FlexLayout Style="{StaticResource FlexLayoutStyle}">
+                    <Label x:Name="H23LabelHeader" Text="23" Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="H23Label" Style="{StaticResource LabelStyle}" />
+                    <BoxView Style="{StaticResource BoxStyle}"/>
+                    <StackLayout Orientation="Horizontal" Spacing="0">
+                        <Label x:Name="H23LabelEfficiency" Style="{StaticResource EfficiencyLabelStyle}"  />
+                        <Label Text="%" Style="{StaticResource PercentLabelStyle}"/>
+                    </StackLayout>
+                </FlexLayout>
+            </Frame>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

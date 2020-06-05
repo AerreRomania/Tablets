@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<MasterDetailPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:views="clr-namespace:SmartB.Core.Views;assembly=SmartB.Core"
+             xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
+             x:Class="SmartB.Core.Views.MainView"
+             utility:ViewModelLocator.AutoWireViewModel="True" 
+             MasterBehavior="Popover"
+             Title="SmartB">
+    <MasterDetailPage.Master>
+        <views:MenuView BindingContext="{Binding MenuViewModel}"  />
+    </MasterDetailPage.Master>
+    <MasterDetailPage.Detail>
+        <ContentPage></ContentPage>
+    </MasterDetailPage.Detail>
+</MasterDetailPage>

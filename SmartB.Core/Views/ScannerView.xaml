@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
+             xmlns:forms="clr-namespace:ZXing.Net.Mobile.Forms;assembly=ZXing.Net.Mobile.Forms"
+             x:Class="SmartB.Core.Views.ScannerView" 
+             NavigationPage.HasBackButton="True"
+             utility:ViewModelLocator.AutoWireViewModel="True">
+    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        <forms:ZXingScannerView  
+            IsScanning="{Binding IsScanning}" 
+            IsAnalyzing="{Binding IsAnalyzing}"
+            Result="{Binding Result, Mode=TwoWay}"
+            ScanResultCommand="{Binding QRScanResultCommand}" />
+        <forms:ZXingDefaultOverlay  ShowFlashButton="False" Opacity="0.9" >
+
+        </forms:ZXingDefaultOverlay>
+    </Grid>
+</ContentPage>

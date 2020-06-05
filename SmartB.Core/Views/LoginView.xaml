@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
+xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
+x:Class="SmartB.Core.Views.LoginView"
+xmlns:autocomplete="clr-namespace:Syncfusion.SfAutoComplete.XForms;assembly=Syncfusion.SfAutoComplete.XForms"
+xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+xmlns:popupLayout="clr-namespace:Syncfusion.XForms.PopupLayout;assembly=Syncfusion.SfPopupLayout.XForms"
+utility:ViewModelLocator.AutoWireViewModel="True">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="IPLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+                <Setter Property="TextColor" Value="Gray" />
+                <Setter Property="Opacity" Value="87" />
+                <Setter Property="WidthRequest" Value="500" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="500"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="400"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+
+        <AbsoluteLayout HorizontalOptions="FillAndExpand" HeightRequest="500" WidthRequest="400" Grid.Row="1" Grid.Column="1">
+            <Frame AbsoluteLayout.LayoutFlags="SizeProportional" AbsoluteLayout.LayoutBounds="0.5,0.5,1,1" 
+                       BackgroundColor="White" HasShadow="true"
+                       CornerRadius="15" 
+                       >
+                <StackLayout Margin="0, 30">
+                    <buttons:SfButton VerticalOptions="Center"
+                                      HorizontalOptions="Center"
+                                      CornerRadius="10"
+                                      HasShadow="True"
+                                      BorderWidth="1"
+                                      BorderColor="Crimson"
+                                      BackgroundColor="Gray"
+                                      Text="Scan QR Code"
+                                      FontSize="20"
+                                      Command="{Binding ScannerCommand}" />
+
+                    <inputLayout:SfTextInputLayout Hint="Name"  ContainerType="Outlined" OutlineCornerRadius="8">
+                        <autocomplete:SfAutoComplete AutoCompleteMode="SuggestAppend" 
+                                                     SuggestionBoxPlacement="Top" 
+                                                     SuggestionMode="Contains"
+                                                     Watermark="User name" 
+                                                     MaximumDropDownHeight="100"
+                                                     WidthRequest="100"
+                                                     DataSource="{Binding NamesList}"  
+                                                     SelectedItem="{Binding UserName}"/>
+                    </inputLayout:SfTextInputLayout>
+
+
+                    <inputLayout:SfTextInputLayout Hint="Password" ContainerType="Outlined" OutlineCornerRadius="8" >
+                        <Entry IsPassword="True" Text="{Binding Password}" Keyboard="Numeric" />
+                    </inputLayout:SfTextInputLayout>
+
+                    <buttons:SfButton VerticalOptions="Center"
+                                     HorizontalOptions="Center"
+                                     CornerRadius="10"
+                                     HasShadow="True"
+                                     BorderWidth="1"
+                                     BorderColor="Crimson"
+                                     BackgroundColor="Gray"
+                                     Text="Sign In"
+                                     FontSize="20"
+                                     Command="{Binding LoginCommand}" />
+
+                </StackLayout>
+            </Frame>
+            <Frame  AbsoluteLayout.LayoutFlags="PositionProportional" Padding="0,0,0,0" BackgroundColor="Transparent" BorderColor="Transparent"
+                    AbsoluteLayout.LayoutBounds="0.5,0,50,50" VerticalOptions="Fill" HorizontalOptions="Fill">
+            </Frame>
+        </AbsoluteLayout>
+    </Grid>
+</ContentPage>

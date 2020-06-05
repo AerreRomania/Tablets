@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="SmartB.Core.Controls.JobInformationManichino">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <Style x:Key="LabelHeaderStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="White"/>
+                <Setter Property="BackgroundColor" Value="Gray"/>
+                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="HorizontalTextAlignment" Value="Start"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+                <Setter Property="Margin" Value="3,0,0,0"/>
+            </Style>
+            <Style x:Key="LabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="Black"/>
+                <Setter Property="FontSize" Value="17"/>
+                <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                <Setter Property="VerticalOptions" Value="Center"/>
+            </Style>
+
+            <Style x:Key="FrameStyle" TargetType ="Frame">
+                <Setter Property="BackgroundColor" Value="White"/>
+                <Setter Property="BorderColor" Value="DarkGray"/>
+                <Setter Property="CornerRadius" Value="4"/>
+                <Setter Property="Padding" Value="0"/>
+            </Style>
+        </ResourceDictionary>
+    </ContentView.Resources>
+    <ContentView.Content>
+        <StackLayout Orientation="Horizontal">
+
+            <Frame Style="{StaticResource FrameStyle}">
+                <StackLayout Orientation="Horizontal">
+                    <Label x:Name="EmployeeLabelHeader" Text="Employee: " Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="EmployeeLabel" Style="{StaticResource LabelStyle}"  />
+                </StackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource FrameStyle}">
+                <StackLayout Orientation="Horizontal">
+                    <Label x:Name="SectorLabelHeader"  Text="Sector: " Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="SectorLabel" Style="{StaticResource LabelStyle}" />
+                </StackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource FrameStyle}">
+                <StackLayout Orientation="Horizontal">
+                    <Label x:Name="OrderLabelHeader" Text="Commessa: " Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="CommessaLabel" Style="{StaticResource LabelStyle}" />
+                </StackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource FrameStyle}">
+                <StackLayout Orientation="Horizontal">
+                    <Label x:Name="PhaseLabelHeader"  Text="Phase: " Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="PhaseLabel" Style="{StaticResource LabelStyle}" />
+                </StackLayout>
+            </Frame>
+
+            <Frame Style="{StaticResource FrameStyle}">
+                <StackLayout Orientation="Horizontal">
+                    <Label x:Name="MachineLabelHeader"  Text="Machine: " Style="{StaticResource LabelHeaderStyle}"/>
+                    <Label x:Name="MachineLabel" Style="{StaticResource LabelStyle}" />
+                </StackLayout>
+            </Frame>
+
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

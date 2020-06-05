@@ -1,0 +1,322 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:SmartB.Core.Controls;assembly=SmartB.Core"
+             xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:popupLayout="clr-namespace:Syncfusion.XForms.PopupLayout;assembly=Syncfusion.SfPopupLayout.XForms"
+             xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
+             mc:Ignorable="d"
+             x:Class="SmartB.Core.Views.ManichinoView"
+             NavigationPage.HasBackButton="False"
+             utility:ViewModelLocator.AutoWireViewModel="True">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="SwitchButtonStyle" TargetType="Switch">
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+            </Style>
+
+            <Style x:Key="PauseLabelStyle" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="VerticalOptions" Value="Center" />
+                <Setter Property="TextColor" Value="Gray" />
+                <Setter Property="Opacity" Value="87" />
+                <Setter Property="WidthRequest" Value="500" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="Margin" Value="0,10,0,0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ContentPage.Content>
+
+        <StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" >
+                <Frame CornerRadius="10" WidthRequest="170"
+                       BackgroundColor="White"
+                   BorderColor="Red"
+                   Padding="0">
+                    <StackLayout>
+                    <Label TextColor="WhiteSmoke" Text="Capi/H" BackgroundColor="Crimson" FontFamily="SegoeUI" FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
+                    <Label TextColor="Crimson" Text="{Binding Norm}" FontFamily="SegoeUI" FontAttributes ="Bold" FontSize="30" VerticalTextAlignment="End" HorizontalTextAlignment="Center" />
+                </StackLayout>
+            </Frame>
+
+            <controls:FirstShiftHours IsVisible="{Binding FirstShift}"
+                                       H6="{Binding Hours.H6, Mode=TwoWay}"
+                                      H7="{Binding Hours.H7, Mode=TwoWay}"
+                                      H8="{Binding Hours.H8, Mode=TwoWay}"
+                                      H9="{Binding Hours.H9, Mode=TwoWay}"
+                                      H10="{Binding Hours.H10, Mode=TwoWay}"
+                                      H11="{Binding Hours.H11, Mode=TwoWay}"
+                                      H12="{Binding Hours.H12, Mode=TwoWay}"
+                                      H13="{Binding Hours.H13, Mode=TwoWay}"
+                                      H14="{Binding Hours.H14, Mode=TwoWay}"
+                                      H15="{Binding Hours.H15, Mode=TwoWay}" 
+                                      H6Efficiency="{Binding EfficiencyForHours.H6Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H7Efficiency="{Binding EfficiencyForHours.H7Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H8Efficiency="{Binding EfficiencyForHours.H8Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H9Efficiency="{Binding EfficiencyForHours.H9Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H10Efficiency="{Binding EfficiencyForHours.H10Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H11Efficiency="{Binding EfficiencyForHours.H11Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H12Efficiency="{Binding EfficiencyForHours.H12Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H13Efficiency="{Binding EfficiencyForHours.H13Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H14Efficiency="{Binding EfficiencyForHours.H14Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                      H15Efficiency="{Binding EfficiencyForHours.H15Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"/>
+
+            <controls:SecondShiftHours IsVisible="{Binding SecondShift}"
+                                       H15="{Binding Hours.H15, Mode=TwoWay}"
+                                       H16="{Binding Hours.H16, Mode=TwoWay}"
+                                       H17="{Binding Hours.H17, Mode=TwoWay}"
+                                       H18="{Binding Hours.H18, Mode=TwoWay}"
+                                       H19="{Binding Hours.H19, Mode=TwoWay}"
+                                       H20="{Binding Hours.H20, Mode=TwoWay}"
+                                       H21="{Binding Hours.H21, Mode=TwoWay}"
+                                       H22="{Binding Hours.H22, Mode=TwoWay}"
+                                       H23="{Binding Hours.H23, Mode=TwoWay}" 
+                                       H15Efficiency="{Binding EfficiencyForHours.H15Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                       H16Efficiency="{Binding EfficiencyForHours.H16Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                       H17Efficiency="{Binding EfficiencyForHours.H17Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                       H18Efficiency="{Binding EfficiencyForHours.H18Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                       H19Efficiency="{Binding EfficiencyForHours.H19Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                       H20Efficiency="{Binding EfficiencyForHours.H20Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                       H21Efficiency="{Binding EfficiencyForHours.H21Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                       H22Efficiency="{Binding EfficiencyForHours.H22Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                                       H23Efficiency="{Binding EfficiencyForHours.H23Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"/>
+
+
+            <Frame CornerRadius="10" WidthRequest="170"
+                   BackgroundColor="White"
+                   BorderColor="Red"
+                   Padding="0">
+                <StackLayout>
+                    <Label TextColor="WhiteSmoke" Text="Efficienza" BackgroundColor="Crimson" FontSize="Medium" FontFamily="SegoeUI" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
+                    <Label TextColor="Crimson" Text="{Binding EfficiencyCurrent, Mode=TwoWay, StringFormat='{0:0}%'}" FontFamily="SegoeUI" FontAttributes="Bold" FontSize="30" VerticalTextAlignment="End" HorizontalTextAlignment="Center" />
+                </StackLayout>
+            </Frame>
+            </StackLayout>
+
+            <StackLayout  Orientation="Horizontal" HorizontalOptions="Center" >
+                <Label  Text="Capi Totale"  HorizontalTextAlignment="Center" TextColor="DimGray" FontSize ="16" />
+                <Label  Text="{Binding TotalPieces}" HorizontalTextAlignment="Center" TextColor="Crimson" FontAttributes="Bold" FontSize ="16" />
+            </StackLayout>
+
+            <StackLayout  Orientation="Horizontal" HorizontalOptions="Center" >
+                     <Label  Text="Efficienza Totale"  HorizontalTextAlignment="Center" TextColor="DimGray" FontSize ="16" />
+                     <Label  Text="{Binding EfficiencyTotal, StringFormat='{0:0.0}%'}" HorizontalTextAlignment="Center" TextColor="Crimson" FontAttributes="Bold" FontSize ="16" />
+               </StackLayout>
+
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand"  >
+            
+                    <StackLayout Margin="0, 30, 0 ,0">
+                    <Label Text="B" FontAttributes="Bold" TextColor="ForestGreen"/>
+                    <Label Text="U" FontAttributes="Bold" TextColor="ForestGreen"/>
+                    <Label Text="O" FontAttributes="Bold" TextColor="ForestGreen"/>
+                    <Label Text="N" FontAttributes="Bold" TextColor="ForestGreen"/>
+                    <Label Text="E" FontAttributes="Bold" TextColor="ForestGreen"/>
+                </StackLayout>
+          
+                    <buttons:SfButton x:Name="ButtonPiece" Margin="10" Clicked="ButtonPiece_OnClicked"
+                                  IsEnabled="{Binding IsButtonEnabled, Mode=TwoWay}"
+                                  CornerRadius="25"
+                                  HasShadow="True"
+                                  BorderWidth="5"
+                                  BorderColor="Gray"
+                                  FontSize="100"
+                                  TextColor="White"
+                                  WidthRequest="400"
+                                  HeightRequest="180"
+                                  BackgroundColor= "ForestGreen"
+                                  Text="{Binding CounterGood, Mode=TwoWay}"
+                                  Command="{Binding SavePiece}" />
+
+                    <BoxView WidthRequest="3" BackgroundColor="LightGray"/>
+
+
+                <popupLayout:SfPopupLayout WidthRequest="400" IsOpen="{Binding CanShowDefectPopup}" StaysOpen="True">
+                    <popupLayout:SfPopupLayout.PopupView>
+                        <popupLayout:PopupView AnimationMode="Fade" HeightRequest ="300" WidthRequest="700"
+                                               ShowHeader="True" HeaderTitle="Descrizione Deffetto" HeaderHeight="80" 
+                                               ShowFooter="False"
+                                               ShowCloseButton="False" BackgroundColor="WhiteSmoke" >
+                            <popupLayout:PopupView.ContentTemplate>
+                                <DataTemplate>
+                                    <FlexLayout  Direction="Row" AlignItems="Center" JustifyContent="SpaceAround">
+
+                                        <buttons:SfButton CornerRadius="25"
+                                                          HasShadow="True"
+                                                          BorderWidth="5"
+                                                          BorderColor="Gray"
+                                                          FontSize="30"
+                                                          FontAttributes="Bold"
+                                                          TextColor="LightGray"
+                                                          WidthRequest="200"
+                                                          HeightRequest="150"
+                                                          BackgroundColor="Orange"
+                                                          Text="Tessitura"
+                                                          Command="{Binding TessituraDefectCommand}"/>
+
+                                        <buttons:SfButton CornerRadius="25"
+                                                          HasShadow="True"
+                                                          BorderWidth="5"
+                                                          BorderColor="Gray"
+                                                          FontSize="30"
+                                                          FontAttributes="Bold"
+                                                          TextColor="LightGray"
+                                                          WidthRequest="200"
+                                                          HeightRequest="150"
+                                                          BackgroundColor="Orange"
+                                                          Text="Confezione"
+                                                          Command="{Binding ConfectionDefectCommand}"/>
+
+                                        <buttons:SfButton CornerRadius="25"
+                                                          HasShadow="True"
+                                                          BorderWidth="5"
+                                                          BorderColor="Gray"
+                                                          FontSize="30"
+                                                          FontAttributes="Bold"
+                                                          TextColor="LightGray"
+                                                          HeightRequest="150"
+                                                          WidthRequest="200"
+                                                          BackgroundColor="Orange"
+                                                          Text="Altro"
+                                                          Command="{Binding AltroDefectCommand}"/>
+                                    </FlexLayout>
+                                </DataTemplate>
+                            </popupLayout:PopupView.ContentTemplate>
+                        </popupLayout:PopupView>
+                    </popupLayout:SfPopupLayout.PopupView>
+                    <popupLayout:SfPopupLayout.Content>
+                        <StackLayout>
+                            <buttons:SfButton x:Name="ButtonBadPiece" Margin="10" Clicked="ButtonBadPiece_OnClicked"
+                                              IsEnabled="{Binding IsButtonEnabled, Mode=TwoWay}"
+                                              CornerRadius="25"
+                                              HasShadow="True"
+                                              BorderWidth="5"
+                                              BorderColor="Gray"
+                                              FontSize="100"
+                                              HeightRequest="180"
+                                              TextColor="White"
+                                              BackgroundColor="Orange"
+                                              Text="{Binding CounterBad, Mode=TwoWay}"
+                                              Command="{Binding SaveDefectedPiece}" />
+                        </StackLayout>
+                    </popupLayout:SfPopupLayout.Content>
+                </popupLayout:SfPopupLayout>
+
+
+                    <StackLayout Margin="0, 30, 0 ,0">
+                        <Label Text="R" FontAttributes="Bold" TextColor="Orange"/>
+                        <Label Text="O" FontAttributes="Bold" TextColor="Orange"/>
+                        <Label Text="T" FontAttributes="Bold" TextColor="Orange"/>
+                        <Label Text="T" FontAttributes="Bold" TextColor="Orange"/>
+                        <Label Text="E" FontAttributes="Bold" TextColor="Orange"/>
+                    </StackLayout>
+            </StackLayout>
+
+            <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="50" >
+
+                <buttons:SfButton CornerRadius="25"  WidthRequest="150" 
+                              HasShadow="True"
+                              BorderWidth="2"
+                              BorderColor="Crimson"
+                              FontSize="18"
+                              TextColor="White"
+                              BackgroundColor="Gray"
+                              Text="STOP"
+                              Command="{Binding StopJobCommand}" />
+
+                <popupLayout:SfPopupLayout  WidthRequest="150" IsOpen="{Binding CanShowPausePopup}">
+                    <popupLayout:SfPopupLayout.PopupView>
+                        <popupLayout:PopupView AnimationMode="SlideOnRight" HeightRequest ="350" WidthRequest="350" ShowHeader="False"
+                                           AcceptCommand="{Binding PauseJobAcceptCommand}">
+                            <popupLayout:PopupView.ContentTemplate>
+                                <DataTemplate>
+                                    <StackLayout>
+
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text ="  Pausa 1"  Style="{StaticResource PauseLabelStyle}" />
+                                            <Switch IsToggled="{Binding Pause1Switch, Mode=TwoWay}" Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text ="  Pausa 2"  Style="{StaticResource PauseLabelStyle}" />
+                                            <Switch IsToggled="{Binding Pause2Switch, Mode=TwoWay}"   Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text ="  WC"  Style="{StaticResource PauseLabelStyle}" />
+                                            <Switch IsToggled="{Binding WcSwitch, Mode=TwoWay}"   Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text ="  Problemi Tecnici"  Style="{StaticResource PauseLabelStyle}" />
+                                            <Switch IsToggled="{Binding TechnicalProblemsSwitch, Mode=TwoWay}"  Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text ="  Varie"   Style="{StaticResource PauseLabelStyle}" />
+                                            <Switch IsToggled="{Binding OtherSwitch, Mode=TwoWay}"  Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                    </StackLayout>
+                                </DataTemplate>
+                            </popupLayout:PopupView.ContentTemplate>
+                        </popupLayout:PopupView>
+                    </popupLayout:SfPopupLayout.PopupView>
+                    <popupLayout:SfPopupLayout.Content>
+                        <StackLayout>
+                            <buttons:SfButton CornerRadius="25"
+                                          HasShadow="True"
+                                          BorderWidth="2"
+                                          BorderColor="Crimson"
+                                          FontSize="18"
+                                          TextColor="White"
+                                          BackgroundColor="Gray"
+                                          Text="PAUSE"
+                                          Command="{Binding PauseJobCommand}" />
+                        </StackLayout>
+                    </popupLayout:SfPopupLayout.Content>
+                </popupLayout:SfPopupLayout>
+            </StackLayout>
+
+            <popupLayout:SfPopupLayout IsOpen="{Binding CanShowStopwatchPopup}" StaysOpen="True" >
+                <popupLayout:SfPopupLayout.PopupView >
+                    <popupLayout:PopupView ShowFooter="False" ShowHeader="False" IsFullScreen="True" AnimationMode="Zoom">
+                        <popupLayout:PopupView.ContentTemplate>
+                            <DataTemplate >
+                                <FlexLayout AlignItems="Center" AlignContent="Center" Direction="Column">
+                                    <Label  Text="{Binding PauseType}"  FontSize="45" HorizontalTextAlignment="Center" Margin="25" TextColor="Black" />
+                                    <Label  Text ="{Binding StopwatchTime, Mode=TwoWay}"  FontSize="40" HorizontalTextAlignment="Center" Margin="25" />
+                                    <buttons:SfButton CornerRadius="25"  WidthRequest="200"  Margin="35" 
+                                                      HasShadow="True"
+                                                      BorderWidth="2"
+                                                      BorderColor="Crimson"
+                                                      FontSize="18"
+                                                      TextColor="White"
+                                                      BackgroundColor="Gray"
+                                                      Text="STOP"
+                                                      Command="{Binding StopStopwatchCommand}" />
+                                </FlexLayout>
+                            </DataTemplate>
+                        </popupLayout:PopupView.ContentTemplate>
+                    </popupLayout:PopupView>
+                </popupLayout:SfPopupLayout.PopupView>
+            </popupLayout:SfPopupLayout>
+            <StackLayout Orientation="Horizontal" HeightRequest="30">
+            <buttons:SfButton x:Name="ReverseLandscapeButton"
+                              FontSize="13"
+                              VerticalOptions="Start"
+                              Text="Reverse View"
+                              BackgroundColor="Crimson"
+                              Clicked="ReverseLandscapeButton_OnClicked"/>
+
+            <controls:JobInformationManichino HorizontalOptions="CenterAndExpand"
+                                              Commessa="{Binding Commessa}" 
+                                     Employee="{Binding EmployeeName}" 
+                                     Phase="{Binding Phase}"
+                                     Sector="{Binding Sector}"
+                                     Machine="{Binding MachineCode}"/>
+            </StackLayout>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
