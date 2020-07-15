@@ -373,7 +373,7 @@ namespace SmartB.Core.ViewModels
                     _settingsService.LastClickSetting = clickTime.ToString();
 
 
-                    await WaitAndExecute((int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3,
+                    await WaitAndExecute(5000/*(int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3*/,
                         EnableClickPieceButton);
 
                     _settingsService.CounterSettings = Counter.ToString();

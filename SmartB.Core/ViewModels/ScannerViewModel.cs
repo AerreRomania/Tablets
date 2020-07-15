@@ -197,7 +197,21 @@ namespace SmartB.Core.ViewModels
                             // we store the Id to know if the user is already logged in to the application
                             _settingsService.UserIdSetting = authenticationResponse.User.Id.ToString();
                             _settingsService.UserNameSetting = authenticationResponse.User.Angajat;
-                            _settingsService.UserSectorSettings = authenticationResponse.User.IdSector == 1 ? "Confection" : "Stiro";
+
+                            var strSector = string.Empty;
+                            var idSector = authenticationResponse.User.IdSector;
+                            if (idSector == 1)
+                                strSector = "Confection";
+                            else if (idSector == 2)
+                                strSector = "Stiro";
+                            else if (idSector == 6)
+                                strSector = "Ramendo";
+                            else if (idSector == 7)
+                                strSector = "Tessitura";
+                            else if (idSector == 8)
+                                strSector = "Sartoria";
+
+                            _settingsService.UserSectorSettings = strSector;
                             _settingsService.UserLineSettings = authenticationResponse.User.Linie;
                             _settingsService.UserLoginDateSettings = timeWhenUserLogged.ToString();
                             IsBusy = false;
