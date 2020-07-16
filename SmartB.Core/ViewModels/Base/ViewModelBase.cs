@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-
 namespace SmartB.Core.ViewModels.Base
 {
     public class ViewModelBase : INotifyPropertyChanged
@@ -10,19 +9,14 @@ namespace SmartB.Core.ViewModels.Base
         protected IConnectionService _connectionService;
         protected INavigationService _navigationService;
         protected IDialogService _dialogService;
-
         public ViewModelBase(IConnectionService connectionService, INavigationService navigationService,
-            IDialogService dialogService)
+                             IDialogService dialogService)
         {
             _connectionService = connectionService;
             _navigationService = navigationService;
             _dialogService = dialogService;
         }
-
-        private bool _isBusy;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        private bool _isBusy;        
         public bool IsBusy
         {
             get => _isBusy;
@@ -32,13 +26,12 @@ namespace SmartB.Core.ViewModels.Base
                 OnPropertyChanged(nameof(IsBusy));
             }
         }
-
+        public event PropertyChangedEventHandler PropertyChanged;
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
         public virtual Task InitializeAsync(object data)
         {
             return Task.FromResult(false);

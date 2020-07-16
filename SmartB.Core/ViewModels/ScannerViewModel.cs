@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
-using Plugin.DeviceInfo;
 using SmartB.Core.Contracts.Services.Data;
 using SmartB.Core.Contracts.Services.General;
 using SmartB.Core.Exceptions;
@@ -9,7 +7,6 @@ using SmartB.Core.ViewModels.Base;
 using Xamarin.Forms;
 using ZXing;
 using Device = Xamarin.Forms.Device;
-
 namespace SmartB.Core.ViewModels
 {
      public class ScannerViewModel : ViewModelBase
@@ -23,7 +20,6 @@ namespace SmartB.Core.ViewModels
         private ISettingsService _settingsService;
         private IMasiniService _machineService;
         //private IDeviceDataService _deviceDataService;
-
         public ScannerViewModel(IConnectionService connectionService,
             INavigationService navigationService,
             IDialogService dialogService,
@@ -43,8 +39,6 @@ namespace SmartB.Core.ViewModels
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
           //  _deviceDataService = deviceDataService ?? throw new ArgumentNullException(nameof(deviceDataService));
         }
-
-
         public bool IsAnalyzing
         {
             get { return _isAnalyzing; }
@@ -57,7 +51,6 @@ namespace SmartB.Core.ViewModels
                 }
             }
         }
-
         public bool IsScanning
         {
             get { return _isScanning; }
@@ -70,7 +63,6 @@ namespace SmartB.Core.ViewModels
                 }
             }
         }
-
         public Command QRScanResultCommand
         {
             get
@@ -79,21 +71,17 @@ namespace SmartB.Core.ViewModels
                 {
                     IsAnalyzing = false;
                     IsScanning = false;
-
                     Device.BeginInvokeOnMainThread(() =>
                     {
                         string[] scannerData = Result.Text?.Split('-');
-
                         if (Result.BarcodeFormat == BarcodeFormat.CODE_39)
                         {
                             CommessaWithBarcode(Convert.ToInt32(Result.Text).ToString());
                         }
-
                         if (scannerData?[0] == "User")
                         {
                             LoginWithBarcode(scannerData[1], scannerData[2]);
                         }
-
                         if (scannerData?[0] == "Machine")
                         {
                             MachineWithBarCode(scannerData[1]);
@@ -102,13 +90,10 @@ namespace SmartB.Core.ViewModels
                 });
             }
         }
-
         public Result Result { get; set; }
-
         private async void CommessaWithBarcode(string barcode)
         {
             IsBusy = true;
-
             if (_connectionService.IsConnected)
             {
                 if (!string.IsNullOrEmpty(_settingsService.UserIdSetting))
@@ -118,7 +103,6 @@ namespace SmartB.Core.ViewModels
                         var commessa = await _commessaTimService.GetCommessaTimAsync(barcode);
                         var splitedText = commessa.Commessa.Split('-');
                         _settingsService.CommessaFromBarcode = splitedText[2];
-
                         IsBusy = false;
                         await _navigationService.NavigateToAsync<MainViewModel>();
                         await _dialogService.ShowDialog($"Commessa {commessa.Commessa} is added", string.Empty, "OK");
@@ -133,7 +117,6 @@ namespace SmartB.Core.ViewModels
                     await _navigationService.NavigateToAsync<LoginViewModel>();
                     await _dialogService.ShowDialog("You must login first.", "Information", "OK");
                 }
-
             }
             else
             {
@@ -176,7 +159,6 @@ namespace SmartB.Core.ViewModels
         //    }
 
         //}
-
         private async void LoginWithBarcode(string username, string password)
         {
             if (string.IsNullOrWhiteSpace(_settingsService.UserNameSetting))
@@ -190,14 +172,12 @@ namespace SmartB.Core.ViewModels
                     {
                         AuthenticationResponse authenticationResponse =
                             await _authenticationService.Authenticate(username, password);
-
                         if (authenticationResponse.IsAuthenticated)
                         {
                             var timeWhenUserLogged = await _jobDataService.GetServerDateTime();
                             // we store the Id to know if the user is already logged in to the application
                             _settingsService.UserIdSetting = authenticationResponse.User.Id.ToString();
                             _settingsService.UserNameSetting = authenticationResponse.User.Angajat;
-
                             var strSector = string.Empty;
                             var idSector = authenticationResponse.User.IdSector;
                             if (idSector == 1)
@@ -210,17 +190,15 @@ namespace SmartB.Core.ViewModels
                                 strSector = "Tessitura";
                             else if (idSector == 8)
                                 strSector = "Sartoria";
-
                             _settingsService.UserSectorSettings = strSector;
                             _settingsService.UserLineSettings = authenticationResponse.User.Linie;
                             _settingsService.UserLoginDateSettings = timeWhenUserLogged.ToString();
                             IsBusy = false;
-
                             var user = authenticationResponse.User;
                             user.Active = true;
                             user.LastTimeLogged = timeWhenUserLogged;
                             await _userService.UpdateUserActivity(user.Id.ToString(), user);
-                           // await DeviceInfo();
+                            //await DeviceInfo();
                             await _navigationService.NavigateToAsync<MainViewModel>();
                         }
                         dialog.Hide();
@@ -233,7 +211,6 @@ namespace SmartB.Core.ViewModels
                             $"This username/password combination isn't known. HTTP Code: {e.HttpCode} Error Message: {e.Message}",
                             "Error logging you in",
                             "OK");
-                     
                     }
                     catch (Exception exception)
                     {
@@ -257,30 +234,24 @@ namespace SmartB.Core.ViewModels
             }
             else
             {
-
                 await _navigationService.NavigateToAsync<MainViewModel>();
                 await _dialogService.ShowDialog(
                     $"User already logged in with name {_settingsService.UserNameSetting}, please logout to change user account",
                     "User logged", "OK");
-            
             }
         }
-
         private async void MachineWithBarCode(string id)
         {
             IsBusy = true;
-
             if (_connectionService.IsConnected)
             {
                 if (!string.IsNullOrWhiteSpace(_settingsService.UserNameSetting))
                 {
                     var machine = await _machineService.GetMachineAsync(id);
-                   
                     if (machine.Linie.Contains(_settingsService.UserLineSettings))
                     {
                         try
                         {
-                         
                             // we store the Id to know if the user is already logged in to the application
                             _settingsService.MachineIdSettings = id;
                             _settingsService.MachineCodeSettings = machine.CodMasina;
@@ -293,7 +264,6 @@ namespace SmartB.Core.ViewModels
                         {
                             await _dialogService.ShowDialog(e.ToString(), "Exception", "OK");
                         }
-              
                     }
                     else
                     {
@@ -303,7 +273,6 @@ namespace SmartB.Core.ViewModels
                             "Please contact your superior!",
                             "Wrong line!",
                             "OK");
-       
                     }
                 }
                 else
@@ -313,9 +282,7 @@ namespace SmartB.Core.ViewModels
                         "First try to sing in, then you can scan the machine.",
                         "Wrong barcode!",
                         "OK");
-                    
                 }
-
             }
             else
             {

@@ -7,7 +7,6 @@ using SmartB.Core.Contracts.Services.Data;
 using SmartB.Core.Contracts.Services.General;
 using SmartB.Core.ViewModels.Base;
 using Xamarin.Forms;
-
 namespace SmartB.Core.ViewModels
 {
     public class StartManichinoViewModel : ViewModelBase
@@ -15,33 +14,26 @@ namespace SmartB.Core.ViewModels
         private IJobDataService _jobDataService;
         private ISettingsService _settingsService;
         private IMasiniService _masiniService;
-        public StartManichinoViewModel(IJobDataService jobDataService,ISettingsService settingsService, IMasiniService masiniService, IConnectionService connectionService, INavigationService navigationService, IDialogService dialogService) 
+        public StartManichinoViewModel(IJobDataService jobDataService, ISettingsService settingsService, IMasiniService masiniService, IConnectionService connectionService, INavigationService navigationService, IDialogService dialogService)
             : base(connectionService, navigationService, dialogService)
         {
             _jobDataService = jobDataService;
             _settingsService = settingsService;
             _masiniService = masiniService;
         }
-
         public ICommand StartJob => new Command(OnStartJobCommand);
         public ICommand CancelJob => new Command(OnCancelJobCommand);
-
         public string Machine => _settingsService.MachineCodeSettings;
         public string Phase => _settingsService.SelectedPhaseSettings;
         public string Order => _settingsService.CommessaFromBarcode;
-
-
-
         private async void OnCancelJobCommand()
         {
             await CloseJob();
         }
-
         private async void OnStartJobCommand()
         {
             await FirstWrite();
         }
-
         private async Task FirstWrite()
         {
             try
@@ -62,7 +54,6 @@ namespace SmartB.Core.ViewModels
                 throw;
             }
         }
-
         private async Task CloseJob()
         {
             try
@@ -72,19 +63,15 @@ namespace SmartB.Core.ViewModels
                 var job = await _jobDataService.GetJob(_settingsService.JobIdSettings);
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
                 var currentTime = await _jobDataService.GetServerDateTime();
-
                 job.FirstWrite = currentTime;
                 job.LastWrite = currentTime;
                 job.Closed = currentTime;
-
                 await _jobDataService.UpdateJob(job.Id.ToString(), job);
-
                 if (machine.Active)
                 {
                     machine.Active = false;
                     await _masiniService.UpdateMachineActivity(machine.Id, machine);
                 }
-
                 _settingsService.JobIdSettings = null;
                 _settingsService.JobNormSettings = null;
                 _settingsService.CounterSettings = null;
@@ -100,7 +87,6 @@ namespace SmartB.Core.ViewModels
             {
                 await _dialogService.ShowDialog(e.Message, "Exception:UpdateJobLastWrite", "OK");
             }
-
         }
     }
 }

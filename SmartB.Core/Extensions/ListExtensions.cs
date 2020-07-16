@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
 namespace SmartB.Core.Extensions
 {
     public static class ListExtensions
@@ -12,7 +11,6 @@ namespace SmartB.Core.Extensions
             {
                 collection.Add(item);
             }
-
             return collection;
         }
     }

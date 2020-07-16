@@ -1,14 +1,11 @@
 ﻿using SmartB.Core.Contracts.Services.General;
 using SmartB.Core.ViewModels.Base;
 using System.Threading.Tasks;
-
 namespace SmartB.Core.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
         private MenuViewModel _menuViewModel;
-
-
         public MainViewModel(IConnectionService connectionService, 
             INavigationService navigationService, 
             IDialogService dialogService,
@@ -17,7 +14,6 @@ namespace SmartB.Core.ViewModels
         {
             _menuViewModel = menuViewModel;
         }
-
         public MenuViewModel MenuViewModel
         {
             get => _menuViewModel;
@@ -27,7 +23,6 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public override async Task InitializeAsync(object data)
         {
             await Task.WhenAll

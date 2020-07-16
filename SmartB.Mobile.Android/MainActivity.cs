@@ -20,20 +20,17 @@ using SmartB.Core.Views;
 using Xamarin.Forms;
 using Environment = System.Environment;
 using File = System.IO.File;
-
 namespace SmartB.Mobile.Droid
 {
     [Activity(Label = "SmartB", Icon = "@mipmap/SmartB", Theme = "@style/splashscreen", MainLauncher = true,
         ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation  , ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-
         private Context _context = Android.App.Application.Context;
         private BluetoothConnection _bluetoothConnection;
         BluetoothSocket _bluetoothSocket;
         private Thread _listenerThread;
         private bool _isBluetoothConnected;
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -43,8 +40,6 @@ namespace SmartB.Mobile.Droid
             base.OnCreate(savedInstanceState);
             Forms.SetFlags("UseLegacyRenderers");
             Forms.Init(this, savedInstanceState);
-
-           
             CrossCurrentActivity.Current.Init(this, savedInstanceState);
             UserDialogs.Init(this);
             //AppDomain.CurrentDomain.UnhandledException += CurrentDomainOnUnhandledException;
@@ -52,52 +47,41 @@ namespace SmartB.Mobile.Droid
             ZXing.Net.Mobile.Forms.Android.Platform.Init();
             //DisplayCrashReport();
             LoadApplication(new Core.App());
-      
-
             //allowing the device to change the screen orientation based on the rotation
             MessagingCenter.Subscribe<ManichinoView>(this, "allowLandScapePortrait", sender =>
             {
                 RequestedOrientation = ScreenOrientation.Landscape;
             });
-
             //allowing the device to change the screen orientation based on the rotation
             MessagingCenter.Subscribe<ManichinoView>(this, "allowReverseLandScapePortrait", sender =>
             {
                 RequestedOrientation = ScreenOrientation.ReverseLandscape;
             });
-
             //during page close setting back to portrait
             MessagingCenter.Subscribe<ManichinoView>(this, "preventLandScape", sender =>
             {
                 RequestedOrientation = ScreenOrientation.Portrait;
             });
-
             MessagingCenter.Subscribe<MenuViewModel>(this, "reconnectWifiOL2", sender => { ConnectToNetwork("OLTablet2"); });
             MessagingCenter.Subscribe<MenuViewModel>(this, "reconnectWifiOL", sender => { ConnectToNetwork("OLTablet"); });
-
             MessagingCenter.Subscribe<JobViewModel, string>(this,  "connectToBT", (sender, args) => { ConnectToBluetooth(args);});
-
             MessagingCenter.Subscribe<JobViewModel>(this,  "disconnectFromBT", sender => { DisconnectBluetooth();});
-
             MessagingCenter.Subscribe<JobViewModel>(this,  "red", sender =>
             {
                 byte[] red = Encoding.ASCII.GetBytes("r");
                 SendCommandGetResponse(red, 100);
             });
-
             MessagingCenter.Subscribe<JobViewModel>(this, "yellow", sender =>
             {
                 byte[] yellow = Encoding.ASCII.GetBytes("y");
                 SendCommandGetResponse(yellow, 100);
             });
-
             MessagingCenter.Subscribe<JobViewModel>(this,  "green", sender =>
             {
                  byte[] green = Encoding.ASCII.GetBytes("g");
                 SendCommandGetResponse(green, 100);
             });
         }
-
         private void ConnectToBluetooth(string deviceName)
         {
             if (_isBluetoothConnected)
@@ -105,34 +89,28 @@ namespace SmartB.Mobile.Droid
                 Toast.MakeText(_context, "Already connected to BT.", ToastLength.Long).Show();
                 DisconnectBluetooth();
             }
-
-           
             _listenerThread = new Thread(Listener);
             _listenerThread.Abort();
             _listenerThread.Start();
             _bluetoothConnection = new BluetoothConnection(deviceName);
             _bluetoothConnection.GetAdapter();
             _bluetoothConnection.ThisAdapter.StartDiscovery();
-
             try
             {
                 _bluetoothConnection.GetDevice();
                 _bluetoothConnection.ThisDevice.SetPairingConfirmation(false);
                 _bluetoothConnection.ThisDevice.SetPairingConfirmation(true);
                 _bluetoothConnection.ThisDevice.CreateBond();
-
             }
             catch
             {
                 //deviceException
             }
-
             _bluetoothConnection.ThisAdapter.CancelDiscovery();
             _bluetoothSocket =
                 _bluetoothConnection.ThisDevice.CreateRfcommSocketToServiceRecord(
                     Java.Util.UUID.FromString("00001101-0000-1000-8000-00805f9b34fb"));
             _bluetoothConnection.ThisSocket = _bluetoothSocket;
-
             try
             {
                 _bluetoothConnection.ThisSocket.Connect();
@@ -150,7 +128,6 @@ namespace SmartB.Mobile.Droid
                 // ignored
             }
         }
-
         private void DisconnectBluetooth()
         {
             try
@@ -171,16 +148,12 @@ namespace SmartB.Mobile.Droid
                 // ignored
             }
         }
-
         private void SendCommandGetResponse(byte[] command, int timeout)
         {
-          //  response = null;
-
+            //  response = null;
             byte[] buffer = new byte[1000];
-
             _bluetoothSocket.OutputStream.Flush();
             _bluetoothSocket.InputStream.Flush();
-
             try
             {
                 _bluetoothSocket.OutputStream.Write(command, 0, command.Length);
@@ -189,9 +162,7 @@ namespace SmartB.Mobile.Droid
             {
                 return;
             }
-
             DataInputStream dataInputStream = new DataInputStream(_bluetoothSocket.InputStream);
-
             int counter;
             int byteRead = 0;
             bool endOfPacket = false;
@@ -208,16 +179,13 @@ namespace SmartB.Mobile.Droid
                         break;
                     }
                 }
-
                 if (endOfPacket == false)
                 {
                     byteRead += dataInputStream.Read(buffer, byteRead, 1);
                 }
             }
-
             //response = buffer.Take(byteRead).ToArray();
         }
-
         private void Listener()
         {
             byte[] read = new byte[1];
@@ -229,7 +197,6 @@ namespace SmartB.Mobile.Droid
                     _bluetoothConnection.ThisSocket.InputStream.Close();
                     RunOnUiThread(() =>
                     {
-
                         if (read[0] == 1)
                         {
                         }
@@ -244,42 +211,34 @@ namespace SmartB.Mobile.Droid
                 }
             }
         }
-
         private void ConnectToNetwork(string SSID)
         {
             string networkSSID = SSID;
             string networkPass = "MercuryNicu";
-
             WifiConfiguration wifiConfig = new WifiConfiguration {Ssid = $"\"{networkSSID}\"", PreSharedKey = $"\"{networkPass}\""};
             WifiManager wifiManager = (WifiManager)_context.GetSystemService(Context.WifiService);
-
             int netId = wifiManager.AddNetwork(wifiConfig);
             wifiManager.Disconnect();
             wifiManager.EnableNetwork(netId, true);
             wifiManager.Reconnect();
         }
-
         public override void OnBackPressed()
         {
         }
-
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             global::ZXing.Net.Mobile.Android.PermissionsHandler.OnRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-
         private static void TaskSchedulerOnUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs unobservedTaskExceptionEventArgs)
         {
             var newExc = new Exception("TaskSchedulerOnUnobservedTaskException", unobservedTaskExceptionEventArgs.Exception);
             LogUnhandledException(newExc);
         }
-
         private static void CurrentDomainOnUnhandledException(object sender, UnhandledExceptionEventArgs unhandledExceptionEventArgs)
         {
             var newExc = new Exception("CurrentDomainOnUnhandledException", unhandledExceptionEventArgs.ExceptionObject as Exception);
             LogUnhandledException(newExc);
         }
-
         internal static void LogUnhandledException(Exception exception)
         {
             try
@@ -289,7 +248,6 @@ namespace SmartB.Mobile.Droid
                 var errorFilePath = Path.Combine(libraryPath, errorFileName);
                 var errorMessage = $"Time: {DateTime.Now}\r\nError: Unhandled Exception\r\n{exception}";
                 File.WriteAllText(errorFilePath, errorMessage);
-
                 // Log to Android Device Logging.
                 Android.Util.Log.Error("Crash Report", errorMessage);
             }
@@ -298,22 +256,18 @@ namespace SmartB.Mobile.Droid
                 // just suppress any error logging exceptions
             }
         }
-
         // If there is an unhandled exception, the exception information is diplayed 
         // on screen the next time the app is started (only in debug configuration)
-
         [Conditional("DEBUG")]
         private void DisplayCrashReport()
         {
             const string errorFilename = "Fatal.log";
             var libraryPath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
             var errorFilePath = Path.Combine(libraryPath, errorFilename);
-
             if (!File.Exists(errorFilePath))
             {
                 return;
             }
-
             var errorText = File.ReadAllText(errorFilePath);
             new AlertDialog.Builder(this)
                 .SetPositiveButton("Clear", (sender, args) =>
@@ -328,6 +282,5 @@ namespace SmartB.Mobile.Droid
                 .SetTitle("Crash Report")
                 .Show();
         }
-
     }
 }

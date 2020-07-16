@@ -6,9 +6,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using SmartB.Core.Contracts.Services.Data;
 using SmartB.Core.Enumerations;
-
 using Xamarin.Forms;
-
 namespace SmartB.Core.ViewModels
 {
     public class MenuViewModel : ViewModelBase
@@ -30,13 +28,10 @@ namespace SmartB.Core.ViewModels
             MenuItems = new ObservableCollection<MainMenuItem>();
             LoadMenuItems();
         }
-
         public string WelcomeText => " " + _settingsService.UserNameSetting;
         public ICommand MenuItemTappedCommand => new Command(OnMenuItemTapped);
         public ICommand ConnectToOlTablet => new Command(OnConnectOlTablet);
         public ICommand ConnectToOlTablet2 => new Command(OnConnectOlTablet2);
-
-     
         private void OnConnectOlTablet2(object obj)
         {
             if (!_connectionService.IsConnected)
@@ -50,9 +45,7 @@ namespace SmartB.Core.ViewModels
             {
                 _dialogService.ShowToast("Device is already connected.");
             }
-
         }
-
         private void OnConnectOlTablet(object obj)
         {
             if (!_connectionService.IsConnected)
@@ -66,9 +59,7 @@ namespace SmartB.Core.ViewModels
             {
                 _dialogService.ShowToast("Device is already connected.");
             }
-
         }
-
         public ObservableCollection<MainMenuItem> MenuItems
         {
             get => _menuItems;
@@ -78,29 +69,23 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         private async void OnMenuItemTapped(object menuItemTappedEventArgs)
         {
             if ((menuItemTappedEventArgs as ItemTappedEventArgs)?.Item is MainMenuItem menuItem && menuItem.MenuText == "Log out")
             {
                 bool isJobFinished = _settingsService.JobIdSettings == string.Empty;
-
                 if (isJobFinished)
                 {
                     try
                     {
                         var dialog = _dialogService.ShowProgressDialog("Logging out... ");
-
                         dialog.Show();
-
                         var user = await _userDataService.GetUser(_settingsService.UserIdSetting);
-
                         if (user.Active)
                         {
                             user.Active = false;
                             await _userDataService.UpdateUserActivity(user.Id.ToString(), user);
                         }
-
                         //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
 
                         //if (device.Active)
@@ -108,21 +93,17 @@ namespace SmartB.Core.ViewModels
                         //    device.Active = false;
                         //    await _deviceDataService.UpdateDevice(device, _settingsService.DeviceIdSettings);
                         //}
-
-
                         _settingsService.RemoveSettings();
                         await _navigationService.ClearBackStack();
-
-                       dialog.Hide();
+                        dialog.Hide();
                     }
                     catch (Exception e)
                     {
                         Console.WriteLine(e);
                         throw;
                     }
-
                     var type = menuItem.ViewModelToLoad;
-                  await  _navigationService.NavigateToAsync(type);
+                    await _navigationService.NavigateToAsync(type);
                 }
                 else
                 {
@@ -130,7 +111,6 @@ namespace SmartB.Core.ViewModels
                 }
             }
         }
-
         private void LoadMenuItems()
         {
             //MenuItems.Add(new MainMenuItem
@@ -156,7 +136,6 @@ namespace SmartB.Core.ViewModels
             //{
             //    MenuText = "type 3"
             //});
-
             MenuItems.Add(new MainMenuItem
             {
                 MenuText = "Log out",

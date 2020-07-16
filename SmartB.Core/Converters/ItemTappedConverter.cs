@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using Xamarin.Forms;
-
 namespace SmartB.Core.Converters
 {
     public class ItemTappedConverter: IValueConverter
@@ -12,7 +11,6 @@ namespace SmartB.Core.Converters
                 return eventArgs.Item;
             return null;
         }
-
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

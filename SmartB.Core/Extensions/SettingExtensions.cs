@@ -1,5 +1,4 @@
 ﻿using System;
-
 namespace SmartB.Core.Extensions
 {
     public static class SettingExtensions
@@ -12,6 +11,5 @@ namespace SmartB.Core.Extensions
         {
             return !string.IsNullOrEmpty(hour) ? Convert.ToDouble(hour) : 0;
         }
-
     }
 }

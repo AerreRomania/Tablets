@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using Xamarin.Forms;
-
 namespace SmartB.Core.Converters
 {
     public class CountToVisibilityConverter: IValueConverter
@@ -12,7 +11,6 @@ namespace SmartB.Core.Converters
             var p = bool.Parse(parameter.ToString());
             return p ? v != 0 : v == 0;
         }
-
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

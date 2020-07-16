@@ -5,12 +5,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Polly;
 using SmartB.Core.Contracts.Repository;
 using SmartB.Core.Exceptions;
-
-
 namespace SmartB.Core.Repository
 {
     public class GenericRepository : IGenericRepository
@@ -34,7 +31,6 @@ namespace SmartB.Core.Repository
                         retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
                     )
                     .ExecuteAsync(async () => await httpClient.GetAsync(uri));
-
                 if (responseMessage.IsSuccessStatusCode)
                 {
                     jsonResult =
@@ -42,35 +38,27 @@ namespace SmartB.Core.Repository
                     var json = JsonConvert.DeserializeObject<T>(jsonResult);
                     return json;
                 }
-
                 if (responseMessage.StatusCode == HttpStatusCode.Forbidden ||
                     responseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     throw new ServiceAuthenticationException(jsonResult);
                 }
-
                 throw new HttpRequestExceptionEx(responseMessage.StatusCode, jsonResult);
-
             }
-
             catch (Exception e)
             {
                 Debug.WriteLine($"{ e.GetType().Name + " : " + e.Message}");
                 throw;
             }
         }
-
         public async Task<T> PostAsync<T>(string uri, T data, string authToken = "")
         {
             try
             {
                 HttpClient httpClient = CreateHttpClient(uri);
-
                 var content = new StringContent(JsonConvert.SerializeObject(data));
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
                 string jsonResult = string.Empty;
-
                 var responseMessage = await Policy
                     .Handle<WebException>(ex =>
                     {
@@ -83,22 +71,18 @@ namespace SmartB.Core.Repository
                         retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
                     )
                     .ExecuteAsync(async () => await httpClient.PostAsync(uri, content));
-
                 if (responseMessage.IsSuccessStatusCode)
                 {
                     jsonResult = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var json = JsonConvert.DeserializeObject<T>(jsonResult);
                     return json;
                 }
-
                 if (responseMessage.StatusCode == HttpStatusCode.Forbidden ||
                     responseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     throw new ServiceAuthenticationException(jsonResult);
                 }
-
                 throw new HttpRequestExceptionEx(responseMessage.StatusCode, jsonResult);
-
             }
             catch (Exception e)
             {
@@ -106,18 +90,14 @@ namespace SmartB.Core.Repository
                 throw;
             }
         }
-
         public async Task<TR> PostAsync<T, TR>(string uri, T data, string authToken = "")
         {
             try
             {
                 HttpClient httpClient = CreateHttpClient(uri);
-
                 var content = new StringContent(JsonConvert.SerializeObject(data));
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
                 string jsonResult = string.Empty;
-
                 var responseMessage = await Policy
                     .Handle<WebException>(ex =>
                     {
@@ -130,22 +110,18 @@ namespace SmartB.Core.Repository
                         retryAttempt => TimeSpan.FromSeconds(Math.Pow(5, retryAttempt))
                     )
                     .ExecuteAsync(async () => await httpClient.PostAsync(uri, content));
-
                 if (responseMessage.IsSuccessStatusCode)
                 {
                     jsonResult = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var json = JsonConvert.DeserializeObject<TR>(jsonResult);
                     return json;
                 }
-
                 if (responseMessage.StatusCode == HttpStatusCode.Forbidden ||
                     responseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     throw new ServiceAuthenticationException(jsonResult);
                 }
-
                 throw new HttpRequestExceptionEx(responseMessage.StatusCode, jsonResult);
-    
             }
             catch (Exception e)
             {
@@ -153,20 +129,15 @@ namespace SmartB.Core.Repository
                 throw;
             }
         }
-
         public async Task<T> PutAsync<T>(string uri, T data, string authToken = "")
         {
             try
             {
                 HttpClient httpClient = CreateHttpClient(uri);
-
                 var serializedData = JsonConvert.SerializeObject(data);
                 var content = new StringContent(serializedData);
-
                 content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
                 string jsonResult = string.Empty;
-
                 var responseMessage = await Policy
                     .Handle<WebException>(ex =>
                     {
@@ -179,22 +150,18 @@ namespace SmartB.Core.Repository
                         retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
                     )
                     .ExecuteAsync(async () => await httpClient.PutAsync(uri, content));
-
                 if (responseMessage.IsSuccessStatusCode)
                 {
                     jsonResult = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var json = JsonConvert.DeserializeObject<T>(jsonResult);
                     return json;
                 }
-
                 if (responseMessage.StatusCode == HttpStatusCode.Forbidden ||
                     responseMessage.StatusCode == HttpStatusCode.Unauthorized)
                 {
                     throw new ServiceAuthenticationException(jsonResult);
                 }
-
                 throw new HttpRequestExceptionEx(responseMessage.StatusCode, jsonResult);
-
             }
             catch (Exception e)
             {
@@ -202,26 +169,20 @@ namespace SmartB.Core.Repository
                 throw;
             }
         }
-
         public async Task DeleteAsync(string uri, string authToken = "")
         {
             var httpClient = CreateHttpClient(authToken);
             await httpClient.DeleteAsync(uri);
         }
-
         private HttpClient CreateHttpClient(string authToken)
         {
-          
-                var httpClient = new HttpClient();
-
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                if (!string.IsNullOrEmpty(authToken))
-                {
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-                }
-
-                return httpClient;
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            if (!string.IsNullOrEmpty(authToken))
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+            }
+            return httpClient;
         }
     }
 }

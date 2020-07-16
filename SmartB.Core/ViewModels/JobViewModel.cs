@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -14,7 +13,6 @@ using SmartB.Core.Models;
 using SmartB.Core.ViewModels.Base;
 using Xamarin.Forms;
 using Device = Xamarin.Forms.Device;
-
 namespace SmartB.Core.ViewModels
 {
     public class JobViewModel : ViewModelBase
@@ -28,7 +26,10 @@ namespace SmartB.Core.ViewModels
         private ISettingsService _settingsService;
         private IUsersDataService _usersService;
         private IDeviceDataService _deviceDataService;
-
+        readonly ICommessaTimService _commessaService;
+        readonly IComenziService _comenziService;
+        readonly IArticoleService _articleService;
+        readonly IPhaseService _phaseService;
         public JobViewModel(IConnectionService connectionService, 
                             INavigationService navigationService, 
                             IDialogService dialogService, 
@@ -39,7 +40,11 @@ namespace SmartB.Core.ViewModels
                             IJobEfficiencyService jobEfficiency, 
                             IMasiniService masiniService,
                             IUsersDataService usersDataService, 
-                            IDeviceDataService deviceDataService) : 
+                            IDeviceDataService deviceDataService,
+                            ICommessaTimService commessaService,
+                            IComenziService comenziService,
+                            IArticoleService articleService,
+                            IPhaseService phaseService) : 
                             base(connectionService, navigationService, dialogService)
         {
             _jobEfficiency = jobEfficiency;
@@ -50,21 +55,21 @@ namespace SmartB.Core.ViewModels
             _masiniService = masiniService;
             _usersService = usersDataService;
             _deviceDataService = deviceDataService;
-             
+            _commessaService = commessaService;
+            _comenziService = comenziService;
+            _articleService = articleService;
+            _phaseService = phaseService;
         }
-
         public string Commessa => _settingsService.CommessaFromBarcode;
         public string EmployeeName => _settingsService.UserNameSetting;
         public string MachineCode => _settingsService.MachineCodeSettings;
         public string Phase => _settingsService.SelectedPhaseSettings;
         public string Sector => _settingsService.UserSectorSettings;
-
         public ICommand PauseJobAcceptCommand => new Command(OnPauseJobAcceptCommand);
         public ICommand PauseJobCommand => new Command(OnPauseJobCommand);
         public ICommand SavePiece => new Command(OnSavePiece);
         public ICommand StopJobCommand => new Command(OnStopJobCommand);
         public ICommand StopStopwatchCommand => new Command(OnStopStopwatchCommand);
-
         public override async Task InitializeAsync(object data)
         {
             var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
@@ -90,7 +95,6 @@ namespace SmartB.Core.ViewModels
                 }
             }
         }
-
         private async Task<bool> IsCurrentUserLoggedFromYesterday()
         {
             try
@@ -116,14 +120,12 @@ namespace SmartB.Core.ViewModels
                     machine.Active = false;
                     await _masiniService.UpdateMachineActivity(machine.Id, machine);
                 }
-
                 //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
                 //if (device.Active)
                 //{
                 //    device.Active = false;
                 //    await _deviceDataService.UpdateDevice(device, _settingsService.DeviceIdSettings);
                 //}
-
 
                 _settingsService.RemoveSettings();
 
@@ -138,13 +140,11 @@ namespace SmartB.Core.ViewModels
             }
             return true;
         }
-
         private async Task WaitAndExecute(int milliseconds, Action actionToExecute)
         {
             await Task.Delay(milliseconds);
             actionToExecute();
         }
-
         private async Task AddEfficiencyForJob(Job job)
         {
             try
@@ -195,21 +195,16 @@ namespace SmartB.Core.ViewModels
                 await _dialogService.ShowDialog($"{e.Message}", "", "OK");
             }
         }
-
-
-
         private void EnableClickPieceButton()
         {
             IsButtonEnabled = true;
             IsBusyIndicator = false;
         }
-
         private async Task FillLocalJobData()
         {
             await Task.Delay(100);
             try
             {
-
                 Hours = new Hours
                 {
                     H6 = _settingsService.H6Settings.ToInteger(),
@@ -267,7 +262,6 @@ namespace SmartB.Core.ViewModels
                 throw;
             }
         }
-
         private async Task<double> NormForHours(int norm, DateTime currentDate)
         {
             var job = await _jobService.GetJob(_settingsService.JobIdSettings);
@@ -283,7 +277,6 @@ namespace SmartB.Core.ViewModels
 
             return norm;
         }
-
         private async void OnPauseJobAcceptCommand(object obj)
         {
             try
@@ -333,21 +326,39 @@ namespace SmartB.Core.ViewModels
                 //ignore
             }
         }
-
         private void OnPauseJobCommand(object obj)
         {
             CanShowPausePopup = true;
         }
-
         private async void OnSavePiece(object obj)
         {
             try
             {
                 await ShiftControl(DateTime.Now.Hour);
-
                 if (_connectionService.IsConnected)
                 {
-                   
+                    string barCode = _settingsService.CommessaFromBarcode;
+                    var commessa = await _commessaService.GetCommessaTimAsync(barCode);
+                    var tmpCommessa = await _comenziService.GetOrderWithName(Commessa);
+                    var article = await _articleService.GetArticleAsync(tmpCommessa.IdArticol);
+                    var phases = await _phaseService.GetPhasesAsync(article.Id, MachineCode);
+                    int producedQuantity =
+                        Hours.H6 + Hours.H7 + Hours.H8 +
+                        Hours.H9 + Hours.H10 + Hours.H11 +
+                        Hours.H12 + Hours.H13 + Hours.H14 +
+                        Hours.H15 + Hours.H16 + Hours.H17 +
+                        Hours.H18 + Hours.H19 + Hours.H20 +
+                        Hours.H21 + Hours.H22 + Hours.H23;
+                    if (producedQuantity >= commessa.Quantity)
+                    {
+                        //TODO: Make dialog with text box for pin managers need to insert to continue the process
+                        var dialogResult = await _dialogService.ShowConfirmationDialog(
+                        "Quantity overdraft",
+                        "You have exceeded orders quantity. Would you like to continue?",
+                        "Yes", "No");
+                        if (!dialogResult)
+                            return;
+                    }
                     var normHour = _settingsService.JobNormSettings.ToInteger();
                     var idleClickTime = new TimeSpan(1, 0, 0).TotalMinutes / normHour;
                     var clickTime = await _jobService.GetServerDateTime();
@@ -369,7 +380,7 @@ namespace SmartB.Core.ViewModels
                   //  await UpdateJobFirstWrite(clickTime);
                   await WeightedAverage(idleClickTime, clickTime);
                   await EfficiencyByHour(clickTime);
-
+                    
                     _settingsService.LastClickSetting = clickTime.ToString();
 
 
@@ -383,7 +394,7 @@ namespace SmartB.Core.ViewModels
                 else
                 {
                     await _dialogService.ShowDialog(
-                        "Connection problem please connect you device to WIFI and try again.",
+                        "Connection problem please connect your device to WIFI and try again.",
                         "Internet connection problem",
                         "OK");
                 }
@@ -397,7 +408,6 @@ namespace SmartB.Core.ViewModels
                 //ignore
             }
         }
-
         private async Task CheckMachineState()
         {
             try
@@ -418,7 +428,6 @@ namespace SmartB.Core.ViewModels
                 //ignore
             }
         }
-
         private async void OnStopJobCommand(object obj)
         {
             var action = await _dialogService.ShowConfirmationDialog("Stop current job",
@@ -443,7 +452,6 @@ namespace SmartB.Core.ViewModels
                 //ignore
             }
         }
-
         private async void OnStopStopwatchCommand(object obj)
         {
             try
@@ -465,164 +473,157 @@ namespace SmartB.Core.ViewModels
                 throw;
             }
         }
-
         private async Task PiecesByHour(DateTime date)
         {
-
             await Task.Delay(100);
 
-                Hours[$"H{date.Hour}"] = Counter <= 1 ?  Hours[$"H{date.Hour}"] = 1 : (int)Hours[$"H{date.Hour}"] + 1;
-                HourCounter = (int) Hours[$"H{date.Hour}"];
+            Hours[$"H{date.Hour}"] = Counter <= 1 ? Hours[$"H{date.Hour}"] = 1 : (int)Hours[$"H{date.Hour}"] + 1;
+            HourCounter = (int)Hours[$"H{date.Hour}"];
 
-                OnPropertyChanged(nameof(Hours));
+            OnPropertyChanged(nameof(Hours));
 
-                switch (date.Hour)
-                {
-                    case 6:
-                        _settingsService.H6Settings = Hours.H6.ToString();
-                        break;
-                    case 7:
-                        _settingsService.H7Settings = Hours.H7.ToString();
-                        break;
-                    case 8:
-                        _settingsService.H8Settings = Hours.H8.ToString();
-                        break;
-                    case 9:
-                        _settingsService.H9Settings = Hours.H9.ToString();
-                        break;
-                    case 10:
-                        _settingsService.H10Settings = Hours.H10.ToString();
-                        break;
-                    case 11:
-                        _settingsService.H11Settings = Hours.H11.ToString();
-                        break;
-                    case 12:
-                        _settingsService.H12Settings = Hours.H12.ToString();
-                        break;
-                    case 13:
-                        _settingsService.H13Settings = Hours.H13.ToString();
-                        break;
-                    case 14:
-                        _settingsService.H14Settings = Hours.H14.ToString();
-                        break;
-                    case 15:
-                        _settingsService.H15Settings = Hours.H15.ToString();
-                        break;
-                    case 16:
-                        _settingsService.H16Settings = Hours.H16.ToString();
-                        break;
-                    case 17:
-                        _settingsService.H17Settings = Hours.H17.ToString();
-                        break;
-                    case 18:
-                        _settingsService.H18Settings = Hours.H18.ToString();
-                        break;
-                    case 19:
-                        _settingsService.H19Settings = Hours.H19.ToString();
-                        break;
-                    case 20:
-                        _settingsService.H20Settings = Hours.H20.ToString();
-                        break;
-                    case 21:
-                        _settingsService.H21Settings = Hours.H21.ToString();
-                        break;
-                    case 22:
-                        _settingsService.H22Settings = Hours.H22.ToString();
-                        break;
-                    case 23:
-                        _settingsService.H23Settings = Hours.H23.ToString();
-                        break;
-                }
-
-
+            switch (date.Hour)
+            {
+                case 6:
+                    _settingsService.H6Settings = Hours.H6.ToString();
+                    break;
+                case 7:
+                    _settingsService.H7Settings = Hours.H7.ToString();
+                    break;
+                case 8:
+                    _settingsService.H8Settings = Hours.H8.ToString();
+                    break;
+                case 9:
+                    _settingsService.H9Settings = Hours.H9.ToString();
+                    break;
+                case 10:
+                    _settingsService.H10Settings = Hours.H10.ToString();
+                    break;
+                case 11:
+                    _settingsService.H11Settings = Hours.H11.ToString();
+                    break;
+                case 12:
+                    _settingsService.H12Settings = Hours.H12.ToString();
+                    break;
+                case 13:
+                    _settingsService.H13Settings = Hours.H13.ToString();
+                    break;
+                case 14:
+                    _settingsService.H14Settings = Hours.H14.ToString();
+                    break;
+                case 15:
+                    _settingsService.H15Settings = Hours.H15.ToString();
+                    break;
+                case 16:
+                    _settingsService.H16Settings = Hours.H16.ToString();
+                    break;
+                case 17:
+                    _settingsService.H17Settings = Hours.H17.ToString();
+                    break;
+                case 18:
+                    _settingsService.H18Settings = Hours.H18.ToString();
+                    break;
+                case 19:
+                    _settingsService.H19Settings = Hours.H19.ToString();
+                    break;
+                case 20:
+                    _settingsService.H20Settings = Hours.H20.ToString();
+                    break;
+                case 21:
+                    _settingsService.H21Settings = Hours.H21.ToString();
+                    break;
+                case 22:
+                    _settingsService.H22Settings = Hours.H22.ToString();
+                    break;
+                case 23:
+                    _settingsService.H23Settings = Hours.H23.ToString();
+                    break;
             }
-
+        }
         private async Task EfficiencyByHour(DateTime date)
         {
-
             await Task.Delay(100);
-   
-                EfficiencyForHours[$"H{date.Hour}Efficiency"] = Counter <= 1 ? 0.0 : EfficiencyHour;
 
-                OnPropertyChanged(nameof(EfficiencyForHours));
+            EfficiencyForHours[$"H{date.Hour}Efficiency"] = Counter <= 1 ? 0.0 : EfficiencyHour;
 
-                switch (date.Hour)
-                {
-                    case 6:
-                        _settingsService.H6EfficiencySettings = 
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 7:
-                        _settingsService.H7EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 8:
-                        _settingsService.H8EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 9:
-                        _settingsService.H9EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 10:
-                        _settingsService.H10EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 11:
-                        _settingsService.H11EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 12:
-                        _settingsService.H12EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 13:
-                        _settingsService.H13EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 14:
-                        _settingsService.H14EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 15:
-                        _settingsService.H15EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 16:
-                        _settingsService.H16EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 17:
-                        _settingsService.H17EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 18:
-                        _settingsService.H18EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 19:
-                        _settingsService.H19EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 20:
-                        _settingsService.H20EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 21:
-                        _settingsService.H21EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 22:
-                        _settingsService.H22EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                    case 23:
-                        _settingsService.H22EfficiencySettings =
-                            EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
-                        break;
-                }
+            OnPropertyChanged(nameof(EfficiencyForHours));
+
+            switch (date.Hour)
+            {
+                case 6:
+                    _settingsService.H6EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 7:
+                    _settingsService.H7EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 8:
+                    _settingsService.H8EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 9:
+                    _settingsService.H9EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 10:
+                    _settingsService.H10EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 11:
+                    _settingsService.H11EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 12:
+                    _settingsService.H12EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 13:
+                    _settingsService.H13EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 14:
+                    _settingsService.H14EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 15:
+                    _settingsService.H15EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 16:
+                    _settingsService.H16EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 17:
+                    _settingsService.H17EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 18:
+                    _settingsService.H18EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 19:
+                    _settingsService.H19EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 20:
+                    _settingsService.H20EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 21:
+                    _settingsService.H21EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 22:
+                    _settingsService.H22EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+                case 23:
+                    _settingsService.H22EfficiencySettings =
+                        EfficiencyForHours[$"H{date.Hour}Efficiency"].ToString();
+                    break;
+            }
         }
-
         private async Task ShiftControl(int hour)
         {
             if (hour <= 15)
@@ -637,7 +638,6 @@ namespace SmartB.Core.ViewModels
             }
             await Task.Delay(100);
         }
-
         private async Task StartStopwatch()
         {
             Stopwatch stopwatch = new Stopwatch();
@@ -658,7 +658,6 @@ namespace SmartB.Core.ViewModels
             });
             await Task.Delay(100);
         }
-
         //private async Task UpdateJobFirstWrite(DateTime firstClick)
         //{
         //    try
@@ -677,7 +676,6 @@ namespace SmartB.Core.ViewModels
         //        throw;
         //    }
         //}
-
         private async Task UpdateJobLastWrite()
         {
             try
@@ -702,7 +700,7 @@ namespace SmartB.Core.ViewModels
                     job.LastWrite = lastWrite;
                     job.Closed = currentTime;
                 }
-                
+
                 await _jobService.UpdateJob(job.Id.ToString(), job);
                 await AddEfficiencyForJob(job);
 
@@ -712,8 +710,6 @@ namespace SmartB.Core.ViewModels
                     await _masiniService.UpdateMachineActivity(machine.Id, machine);
                 }
 
-
-                
                 _settingsService.JobIdSettings = null;
                 _settingsService.JobNormSettings = null;
                 _settingsService.CounterSettings = null;
@@ -722,20 +718,14 @@ namespace SmartB.Core.ViewModels
                 _settingsService.TotalEfficiencySettings = null;
                 _settingsService.SelectedPhaseSettings = null;
                 _settingsService.LastClickSetting = null;
-
-
-               // MessagingCenter.Send(this, "disconnectFromBT");
-
-
-               await _navigationService.NavigateToAsync<HomeViewModel>();
+                // MessagingCenter.Send(this, "disconnectFromBT");
+                await _navigationService.NavigateToAsync<HomeViewModel>();
             }
             catch (Exception e)
             {
                 await _dialogService.ShowDialog(e.Message, "Exception:UpdateJobLastWrite", "OK");
             }
-
         }
-
         private async Task WeightedAverage(double normInMinutes, DateTime clickTime)
         {
             try
@@ -746,7 +736,6 @@ namespace SmartB.Core.ViewModels
 
                 if (finishedJobsIds.Length >= 1)
                 {
-              
                     var jobEfficiencies = new List<JobEfficiency>();
                     var previousJobs = new List<Job>();
                     //var pauses = new List<Pause>();
@@ -776,27 +765,27 @@ namespace SmartB.Core.ViewModels
                 }
                 else
                 {
-                    EfficiencyTotal =  _counter / normHours * 100f;
+                    EfficiencyTotal = _counter / normHours * 100f;
                 }
 
-                EfficiencyCurrent = _settingsService.LastClickSetting != string.Empty ? 
-                   TimeSpan.FromMinutes(normInMinutes).TotalSeconds / clickTime.Subtract(DateTime.Parse(_settingsService.LastClickSetting)).TotalSeconds * 100f 
+                EfficiencyCurrent = _settingsService.LastClickSetting != string.Empty ?
+                   TimeSpan.FromMinutes(normInMinutes).TotalSeconds / clickTime.Subtract(DateTime.Parse(_settingsService.LastClickSetting)).TotalSeconds * 100f
                     : 100;
 
-                  EfficiencyHour = (double)HourCounter / norm * 100f;
+                EfficiencyHour = (double)HourCounter / norm * 100f;
 
-                  if (EfficiencyCurrent > 0 && EfficiencyCurrent < 70)
-                  {
-                      BackgroundColorButton = Color.Crimson;
-                  }
-                  else if (EfficiencyCurrent >= 70 && EfficiencyCurrent < 89)
-                  {
-                      BackgroundColorButton = Color.Yellow;
-                  }
-                  else if (EfficiencyCurrent >= 89 && EfficiencyCurrent < 200)
-                  {
-                      BackgroundColorButton = Color.ForestGreen;
-                  }
+                if (EfficiencyCurrent > 0 && EfficiencyCurrent < 70)
+                {
+                    BackgroundColorButton = Color.Crimson;
+                }
+                else if (EfficiencyCurrent >= 70 && EfficiencyCurrent < 89)
+                {
+                    BackgroundColorButton = Color.Yellow;
+                }
+                else if (EfficiencyCurrent >= 89 && EfficiencyCurrent < 200)
+                {
+                    BackgroundColorButton = Color.ForestGreen;
+                }
 
                 //Bluetooth Colors
                 //if (EfficiencyHour > 0 && EfficiencyHour < 70)
@@ -818,9 +807,7 @@ namespace SmartB.Core.ViewModels
                 throw;
             }
         }
-
         #region Button Switch Methods
-
         private void SelectOtherSwitch()
         {
             TechnicalProblemsSwitch = false;
@@ -828,7 +815,6 @@ namespace SmartB.Core.ViewModels
             WcSwitch = false;
             Pause2Switch = false;
         }
-
         private void SelectPause1Switch()
         {
             OtherSwitch = false;
@@ -836,7 +822,6 @@ namespace SmartB.Core.ViewModels
             TechnicalProblemsSwitch = false;
             WcSwitch = false;
         }
-
         private void SelectPause2Switch()
         {
             OtherSwitch = false;
@@ -844,7 +829,6 @@ namespace SmartB.Core.ViewModels
             TechnicalProblemsSwitch = false;
             WcSwitch = false;
         }
-
         private void SelectTechnicalProblemsSwitch()
         {
             OtherSwitch = false;
@@ -852,7 +836,6 @@ namespace SmartB.Core.ViewModels
             WcSwitch = false;
             Pause2Switch = false;
         }
-
         private void SelectWcSwitch()
         {
             OtherSwitch = false;
@@ -861,10 +844,7 @@ namespace SmartB.Core.ViewModels
             Pause2Switch = false;
         }
         #endregion
-
         #region Properties
-
-
         #region StopWatch Properties
 
         private bool _canShowStopwatchPopup;
@@ -903,7 +883,6 @@ namespace SmartB.Core.ViewModels
 
 
         #endregion
-
         #region Pause Switch Properties
 
         private bool _otherSwitch;
@@ -981,11 +960,9 @@ namespace SmartB.Core.ViewModels
             }
         }
         #endregion
-
         #region Hours Properties
 
         #endregion
-
         #region Shift Properties
 
         private bool _firstShift;
@@ -1013,7 +990,6 @@ namespace SmartB.Core.ViewModels
 
 
         #endregion
-
         #region Popup Properties
 
         private bool _canShowPausePopup;
@@ -1040,7 +1016,6 @@ namespace SmartB.Core.ViewModels
         }
 
         #endregion
-
         #region Click Button Properties
         private double _animationDuration;
         private bool _isBusyIndicator;
@@ -1076,7 +1051,6 @@ namespace SmartB.Core.ViewModels
             }
         }
         #endregion
-
         private Hours _hours;
         public Hours Hours
         {
@@ -1089,13 +1063,9 @@ namespace SmartB.Core.ViewModels
                     OnPropertyChanged();
                 }
             }
-
         }
-
         private EfficiencyForHours _efficiencyForHours;
-
         public EfficiencyForHours EfficiencyForHours
-
         {
             get => _efficiencyForHours;
             set
@@ -1108,15 +1078,10 @@ namespace SmartB.Core.ViewModels
             }
         }
         #region Efficiency Properties
-
         private double _efficiencyCurrent;
-
         private double _efficiencyHour;
-
         private double _efficiencyTotal;
-
         private string _norm;
-
         public double EfficiencyCurrent
         {
             get { return _efficiencyCurrent;}
@@ -1126,12 +1091,10 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public double EfficiencyHour
         {
             get
             {
-
                 return _efficiencyHour;
             }
             set
@@ -1158,15 +1121,9 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         #endregion
-
-
         #region Counters Properties
-
         private int _counter;
-
-
         public int Counter
         {
             get { return _counter; }
@@ -1176,13 +1133,9 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public int HourCounter { get; set; }
         #endregion
-
-
         private Color _backgroundColorButton = Color.ForestGreen;
-
         public Color BackgroundColorButton
         {
             get { return _backgroundColorButton; }
@@ -1195,13 +1148,9 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
-        private int _totalPieces;
-
         //private readonly EfficiencyForHours EfficiencyForHours;
         // private readonly Hour Hours;
-
-
+        private int _totalPieces;
         public int TotalPieces
         {
             get => _totalPieces;
@@ -1210,9 +1159,7 @@ namespace SmartB.Core.ViewModels
                 _totalPieces = value;
                 OnPropertyChanged();
             }
-
         }
-
         #endregion
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-
 namespace SmartB.Core.Models
 {
     public class Pause

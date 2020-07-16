@@ -12,7 +12,6 @@ using SmartB.Core.Extensions;
 using SmartB.Core.Models;
 using SmartB.Core.ViewModels.Base;
 using Xamarin.Forms;
-
 namespace SmartB.Core.ViewModels
 {
     public class ManichinoViewModel : ViewModelBase
@@ -26,7 +25,6 @@ namespace SmartB.Core.ViewModels
         private ISettingsService _settingsService;
         private IUsersDataService _usersDataService;
         private IDeviceDataService _deviceDataService;
-
         public ManichinoViewModel(IConnectionService connectionService, 
             INavigationService navigationService,
             IDialogService dialogService,
@@ -49,13 +47,11 @@ namespace SmartB.Core.ViewModels
             _usersDataService = usersDataService;
             _deviceDataService = deviceDataService;
         }
-
         public string Commessa => _settingsService.CommessaFromBarcode + " ";
         public string EmployeeName => _settingsService.UserNameSetting + " ";
         public string MachineCode => _settingsService.MachineCodeSettings + " ";
         public string Phase => _settingsService.SelectedPhaseSettings + " ";
         public string Sector => _settingsService.UserSectorSettings + " ";
-
         public ICommand PauseJobAcceptCommand => new Command(OnPauseJobAcceptCommand);
         public ICommand PauseJobCommand => new Command(OnPauseJobCommand);
         public ICommand SavePiece => new Command(OnSavePiece);
@@ -65,25 +61,20 @@ namespace SmartB.Core.ViewModels
         public ICommand TessituraDefectCommand => new Command(OnTessituraDefectCommand);
         public ICommand ConfectionDefectCommand => new Command(OnConfectionDefectCommand);
         public ICommand AltroDefectCommand => new Command(OnAltroDefectCommand);
-
         private async void OnTessituraDefectCommand(object obj)
         {
             CanShowDefectPopup = false;
             CounterBad++;
             _settingsService.BadPiecesSettings = CounterBad.ToString();
             await SaveClickData(1);
- 
         }
-
         private async void OnConfectionDefectCommand(object obj)
         {
             CanShowDefectPopup = false;
             CounterBad++;
             _settingsService.BadPiecesSettings = CounterBad.ToString();
             await SaveClickData(2);
-       
         }
-
         private async  void OnAltroDefectCommand(object obj)
         {
             CanShowDefectPopup = false;
@@ -91,7 +82,6 @@ namespace SmartB.Core.ViewModels
             _settingsService.BadPiecesSettings = CounterBad.ToString();
             await SaveClickData(3);
         }
-
         private async void OnPauseJobAcceptCommand(object obj)
         {
             try
@@ -121,16 +111,13 @@ namespace SmartB.Core.ViewModels
                     await _dialogService.ShowDialog("Please select pause type", "Information", "OK");
                     return;
                 }
-
                 _pause = new Pause
                 {
                     Type = PauseType,
                     StartPause = await _jobService.GetServerDateTime(),
                     RealizareID = Convert.ToInt32(_settingsService.JobIdSettings)
                 };
-
                 await WaitAndExecute(100, StartStopwatch);
-
             }
             catch (HttpRequestExceptionEx e)
             {
@@ -151,20 +138,16 @@ namespace SmartB.Core.ViewModels
             _settingsService.GoodPiecesSettings = CounterGood.ToString();
             await SaveClickData();
         }
-
         private async Task SaveClickData(int? defectId = null)
         {
             try
             {
                 await ShiftControl(DateTime.Now.Hour);
-
                 if (_connectionService.IsConnected)
                 {
                     var normHour = _settingsService.JobNormSettings.ToInteger();
-
                     var idleClickTime = new TimeSpan(1, 0, 0).TotalMinutes / normHour;
                     var clickTime = await _jobService.GetServerDateTime();
-
                     var click = new Click
                     {
                         Adresa = 0410,
@@ -173,21 +156,17 @@ namespace SmartB.Core.ViewModels
                         IdRealizare = _settingsService.JobIdSettings.ToInteger(),
                         IdDifetto = defectId
                     };
-
                     Counter++;
                     TotalPieces++;
                     await CheckMachineState();
                     await PiecesByHour(clickTime);
                     await _butoaneService.AddClick(click);
-                   // await UpdateJobFirstWrite(clickTime);
+                    // await UpdateJobFirstWrite(clickTime);
                     await WeightedAverage(idleClickTime, clickTime);
                     await EfficiencyByHour(clickTime);
                     _settingsService.LastClickSetting = clickTime.ToString();
-
-                   await ShiftControl(clickTime.Hour);
-
+                    await ShiftControl(clickTime.Hour);
                     await WaitAndExecute((int)TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 2, EnableClickPieceButton);
-
                     _settingsService.CounterSettings = Counter.ToString();
                     _settingsService.TotalEfficiencySettings = EfficiencyTotal.ToString();
                     _settingsService.TotalPiecesSettings = TotalPieces.ToString();
@@ -208,7 +187,6 @@ namespace SmartB.Core.ViewModels
             {
                 //ignore
             }
-  
         }
         private void OnSaveDefectedPiece(object obj)
         {
@@ -218,9 +196,9 @@ namespace SmartB.Core.ViewModels
         {
             var action = await _dialogService.ShowConfirmationDialog("Stop current job",
                 "Do you want to stop your current job?", "Yes", "No");
-            if (!action) return;
+            if (!action)
+                return;
             var dialog = _dialogService.ShowProgressDialog("Please Wait...");
-
             try
             {
                 dialog.Show();
@@ -234,8 +212,7 @@ namespace SmartB.Core.ViewModels
                     "OnStopJobCommand:HttpRequestExceptionEx", "OK");
             }
             catch (Exception)
-            {
-
+            { 
             }
         }
         private async void OnStopStopwatchCommand(object obj)
@@ -243,13 +220,12 @@ namespace SmartB.Core.ViewModels
             try
             {
                 var action = await _dialogService.ShowConfirmationDialog("Leaving pause", "Are you sure?", "Yes", "No");
-
-                if (!action) return;
+                if (!action)
+                    return;
                 _pause.EndPause = await _jobService.GetServerDateTime();
                 CanShowStopwatchPopup = false;
                 await _pauseService.AddPause(_pause);
                 _pause = null;
-
             }
             catch (HttpRequestExceptionEx e)
             {
@@ -271,7 +247,6 @@ namespace SmartB.Core.ViewModels
             TotalPieces = _settingsService.TotalPiecesSettings.ToInteger();
             var normHour = _settingsService.JobNormSettings.ToInteger();
             var clickWorth = _settingsService.OneClickWorthSettings.ToInteger();
-
             if (clickWorth != 1)
             {
                 if (_settingsService.IsNormCalculatedSettings.Equals("true"))
@@ -295,35 +270,27 @@ namespace SmartB.Core.ViewModels
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Logging out... ");
                 dialog.Show();
-
                 await UpdateJobLastWrite();
-
                 var user = await _usersDataService.GetUser(_settingsService.UserIdSetting);
                 if (user.Active)
                 {
                     user.Active = false;
                     await _usersDataService.UpdateUserActivity(user.Id.ToString(), user);
                 }
-
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
                 if (machine.Active)
                 {
                     machine.Active = false;
                     await _masiniService.UpdateMachineActivity(machine.Id, machine);
                 }
-
                 //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
                 //if (device.Active)
                 //{
                 //    device.Active = false;
                 //    await _deviceDataService.UpdateDevice(device, _settingsService.DeviceIdSettings);
                 //}
-
-
                 _settingsService.RemoveSettings();
-
                 dialog.Hide();
-
                 await _navigationService.ClearBackStack();
                 await _navigationService.NavigateToAsync<LoginViewModel>();
             }
@@ -343,15 +310,12 @@ namespace SmartB.Core.ViewModels
             try
             {
                 var span = job.LastWrite - job.FirstWrite;
-
                 if (span != null)
                 {
                     var norm = _settingsService.JobNormSettings.ToInteger();
                     var currentTime = await _jobService.GetServerDateTime();
                     var normForHours = ((double)_counter /  await NormForHours(norm, currentTime) * 100f);
-
                     var efficiency = span.Value.Ticks == 0 ? 0.0 : normForHours;
-
                     var jobEfficiency = new JobEfficiency
                     {
                         Efficiency = efficiency,
@@ -359,7 +323,6 @@ namespace SmartB.Core.ViewModels
                         SpentTime = span.Value.Ticks
                     };
                     var efficiencyEntity = await _jobEfficiency.AddJobEfficiency(jobEfficiency);
-
                     _settingsService.EfficiencyIdsSettings += $"{efficiencyEntity.EfficiencyID},";
                 }
             }
@@ -370,13 +333,9 @@ namespace SmartB.Core.ViewModels
         }
         private async Task EfficiencyByHour(DateTime date)
         {
-
             await Task.Delay(100);
-
             EfficiencyForHours[$"H{date.Hour}Efficiency"] = Counter <= 1 ? 0.0 : EfficiencyHour;
-
             OnPropertyChanged(nameof(EfficiencyForHours));
-
             switch (date.Hour)
             {
                 case 6:
@@ -461,7 +420,6 @@ namespace SmartB.Core.ViewModels
         private async Task FillLocalJobData()
         {
             await Task.Delay(100);
-
             try
             {
                 Hours = new Hours
@@ -485,7 +443,6 @@ namespace SmartB.Core.ViewModels
                     H22 = _settingsService.H22Settings.ToInteger(),
                     H23 = _settingsService.H23Settings.ToInteger()
                 };
-
                 EfficiencyForHours = new EfficiencyForHours
                 {
                     H6Efficiency = _settingsService.H6EfficiencySettings.ToDouble(),
@@ -507,14 +464,11 @@ namespace SmartB.Core.ViewModels
                     H22Efficiency = _settingsService.H22EfficiencySettings.ToDouble(),
                     H23Efficiency = _settingsService.H23EfficiencySettings.ToDouble()
                 };
-
-
                 Norm = _settingsService.JobNormSettings;
                 EfficiencyTotal = _settingsService.TotalEfficiencySettings.ToDouble();
                 Counter = _settingsService.CounterSettings.ToInteger();
                 CounterGood = _settingsService.GoodPiecesSettings.ToInteger();
                 CounterBad = _settingsService.BadPiecesSettings.ToInteger();
-
                 //EfficiencyHour = _settingsService.HourEfficiencySettings.ToInteger();
                 //HourCounter = _settingsService.HourCounterSettings.ToInteger();
             }
@@ -532,12 +486,10 @@ namespace SmartB.Core.ViewModels
             var span = DateTime.Parse(_settingsService.UserLoginDateSettings).Day != currentDate.Day
                 ? lastClick - firstClick
                 : currentDate - firstClick;
-
             if (span != null && span.Value.TotalHours > 1)
             {
                 return norm * span.Value.TotalHours;
             }
-
             return norm;
         }
         private async Task CheckMachineState()
@@ -562,14 +514,10 @@ namespace SmartB.Core.ViewModels
         }
         private async Task PiecesByHour(DateTime date)
         {
-
             await Task.Delay(100);
-
             Hours[$"H{date.Hour}"] = Counter <= 1 ? Hours[$"H{date.Hour}"] = 1 : (int)Hours[$"H{date.Hour}"] + 1;
             HourCounter = (int)Hours[$"H{date.Hour}"];
-
             OnPropertyChanged(nameof(Hours));
-
             switch (date.Hour)
             {
                 case 6:
@@ -627,15 +575,10 @@ namespace SmartB.Core.ViewModels
                     _settingsService.H23Settings = Hours.H23.ToString();
                     break;
             }
-
-
         }
-
         private async Task ShiftControl(int hour)
         {
-
             await Task.Delay(10);
-
             if (hour <= 15)
             {
                 FirstShift = true;
@@ -693,7 +636,6 @@ namespace SmartB.Core.ViewModels
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
                 var lastWrite = await _jobService.GetLastClickForJob(_settingsService.JobIdSettings);
                 var currentTime = await _jobService.GetServerDateTime();
-
                 if (lastWrite == DateTime.Parse("11/11/2011 12:00:00 AM"))
                 {
                     job.LastWrite = currentTime;
@@ -709,18 +651,13 @@ namespace SmartB.Core.ViewModels
                     job.LastWrite = lastWrite;
                     job.Closed = currentTime;
                 }
-
                 await _jobService.UpdateJob(job.Id.ToString(), job);
                 await AddEfficiencyForJob(job);
-
                 if (machine.Active)
                 {
                     machine.Active = false;
                     await _masiniService.UpdateMachineActivity(machine.Id, machine);
                 }
-
-
-
                 _settingsService.JobIdSettings = null;
                 _settingsService.JobNormSettings = null;
                 _settingsService.CounterSettings = null;
@@ -731,14 +668,12 @@ namespace SmartB.Core.ViewModels
                 _settingsService.LastClickSetting = null;
                 _settingsService.GoodPiecesSettings = null;
                 _settingsService.BadPiecesSettings = null;
-
                 await _navigationService.NavigateToAsync<HomeViewModel>();
             }
             catch (Exception e)
             {
                 await _dialogService.ShowDialog(e.Message, "Exception:UpdateJobLastWrite", "OK");
             }
-
         }
         private async Task WeightedAverage(double normInMinutes, DateTime clickTime)
         {
@@ -747,48 +682,38 @@ namespace SmartB.Core.ViewModels
                 var norm = _settingsService.JobNormSettings.ToInteger();
                 var normHours = await NormForHours(_settingsService.JobNormSettings.ToInteger(), clickTime);
                 var finishedJobsIds = _settingsService.EfficiencyIdsSettings.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
                 if (finishedJobsIds.Length >= 1)
                 {
-
                     var jobEfficiencies = new List<JobEfficiency>();
                     var previousJobs = new List<Job>();
                     //var pauses = new List<Pause>();
                     var previousJobsIds = _settingsService.JobsIdSettings.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
                     for (var i = 0; i < finishedJobsIds.Length; i++)
                     {
                         jobEfficiencies.Add(await _jobEfficiency.GetJobEfficiency(finishedJobsIds[i]));
                     }
-
                     for (int i = 0; i < previousJobsIds.Length; i++)
                     {
                         previousJobs.Add(await _jobService.GetJob(previousJobsIds[i]));
                     }
-
                     var weightedAverage = 0.0;
                     var firstJob = previousJobs.FirstOrDefault();
                     var totalTime = await _jobService.GetServerDateTime() - firstJob?.FirstWrite;
-
                     foreach (var job in jobEfficiencies.Where(job => job.SpentTime != 0))
                     {
                         if (totalTime != null)
                             weightedAverage += TimeSpan.FromTicks(job.SpentTime).TotalMinutes / totalTime.Value.TotalMinutes * job.Efficiency;
                     }
-
                     EfficiencyTotal = weightedAverage;
                 }
                 else
                 {
                     EfficiencyTotal = (double)_counter / normHours * 100f;
                 }
-
                 EfficiencyCurrent = _settingsService.LastClickSetting != string.Empty ?
                    TimeSpan.FromMinutes(normInMinutes).TotalSeconds / clickTime.Subtract(DateTime.Parse(_settingsService.LastClickSetting)).TotalSeconds * 100f
                     : 100;
-
                 EfficiencyHour = (double)HourCounter / norm * 100f;
-
             }
             catch (Exception e)
             {
@@ -796,9 +721,7 @@ namespace SmartB.Core.ViewModels
                 throw;
             }
         }
-
         #region Button Switch Methods
-
         private void SelectOtherSwitch()
         {
             TechnicalProblemsSwitch = false;
@@ -806,7 +729,6 @@ namespace SmartB.Core.ViewModels
             WcSwitch = false;
             Pause2Switch = false;
         }
-
         private void SelectPause1Switch()
         {
             OtherSwitch = false;
@@ -814,7 +736,6 @@ namespace SmartB.Core.ViewModels
             TechnicalProblemsSwitch = false;
             WcSwitch = false;
         }
-
         private void SelectPause2Switch()
         {
             OtherSwitch = false;
@@ -822,7 +743,6 @@ namespace SmartB.Core.ViewModels
             TechnicalProblemsSwitch = false;
             WcSwitch = false;
         }
-
         private void SelectTechnicalProblemsSwitch()
         {
             OtherSwitch = false;
@@ -830,7 +750,6 @@ namespace SmartB.Core.ViewModels
             WcSwitch = false;
             Pause2Switch = false;
         }
-
         private void SelectWcSwitch()
         {
             OtherSwitch = false;
@@ -839,10 +758,7 @@ namespace SmartB.Core.ViewModels
             Pause2Switch = false;
         }
         #endregion
-
         #region Properties
-
-
         private Hours _hours;
         public Hours Hours
         {
@@ -855,13 +771,9 @@ namespace SmartB.Core.ViewModels
                     OnPropertyChanged();
                 }
             }
-
         }
-
         private EfficiencyForHours _efficiencyForHours;
-
         public EfficiencyForHours EfficiencyForHours
-
         {
             get => _efficiencyForHours;
             set
@@ -873,15 +785,10 @@ namespace SmartB.Core.ViewModels
                 }
             }
         }
-
         #region StopWatch Properties
-
         private bool _canShowStopwatchPopup;
-
         private string _pauseType;
-
         private string _stopwatchTime;
-
         public bool CanShowStopwatchPopup
         {
             get { return _canShowStopwatchPopup; }
@@ -909,19 +816,13 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
-
         #endregion
-
         #region Pause Switch Properties
-
         private bool _otherSwitch;
         private bool _pause1Switch;
         private bool _pause2Switch;
         private bool _technicalProblemsSwitch;
         private bool _wcSwitch;
-
-
         public bool OtherSwitch
         {
             get { return _otherSwitch; }
@@ -935,7 +836,6 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public bool Pause1Switch
         {
             get { return _pause1Switch; }
@@ -975,7 +875,6 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public bool WcSwitch
         {
             get { return _wcSwitch; }
@@ -990,13 +889,9 @@ namespace SmartB.Core.ViewModels
             }
         }
         #endregion
-
         #region Shift Properties
-
         private bool _firstShift;
-
         private bool _secondShift;
-
         public bool FirstShift
         {
             get { return _firstShift; }
@@ -1015,14 +910,9 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
-
         #endregion
-
         #region Popup Properties
-
         private bool _canShowPausePopup;
-
         public bool CanShowPausePopup
         {
             get { return _canShowPausePopup; }
@@ -1033,12 +923,10 @@ namespace SmartB.Core.ViewModels
             }
         }
         #endregion
-
         #region Click Button Properties
         private double _animationDuration;
         private bool _isBusyIndicator;
         private bool _isButtonEnabled;
-
         public double AnimationDuration
         {
             get { return _animationDuration; }
@@ -1048,7 +936,6 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public bool IsBusyIndicator
         {
             get { return _isBusyIndicator; }
@@ -1058,7 +945,6 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public bool IsButtonEnabled
         {
             get { return _isButtonEnabled; }
@@ -1069,17 +955,11 @@ namespace SmartB.Core.ViewModels
             }
         }
         #endregion
-
         #region Efficiency Properties
-
         private double _efficiencyCurrent;
-
         private double _efficiencyHour;
-
         private double _efficiencyTotal;
-
         private string _norm;
-
         public double EfficiencyCurrent
         {
             get { return _efficiencyCurrent; }
@@ -1089,14 +969,9 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public double EfficiencyHour
         {
-            get
-            {
-
-                return _efficiencyHour;
-            }
+            get { return _efficiencyHour; }
             set
             {
                 _efficiencyHour = value;
@@ -1121,14 +996,9 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         #endregion
-
-
         #region Counters Properties
-
         private int _counter;
-
         public int Counter
         {
             get { return _counter; }
@@ -1138,9 +1008,7 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         private int _counterGood;
-
         public int CounterGood
         {
             get => _counterGood;
@@ -1150,9 +1018,7 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         private int _counterBad;
-
         public int CounterBad
         {
             get { return _counterBad; }
@@ -1162,15 +1028,9 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
-
         public int HourCounter { get; set; }
-
-      
         #endregion
-
         private bool _canShowDefectPopup;
-
         public bool CanShowDefectPopup
         {
             get => _canShowDefectPopup;
@@ -1180,9 +1040,7 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         private int _totalPieces;
-
         public int TotalPieces
         {
             get => _totalPieces;
@@ -1192,7 +1050,6 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         #endregion
     }
 }

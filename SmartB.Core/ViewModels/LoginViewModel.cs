@@ -2,15 +2,12 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Plugin.DeviceInfo;
 using SmartB.Core.Contracts.Services.Data;
 using SmartB.Core.Contracts.Services.General;
 using SmartB.Core.Exceptions;
 using SmartB.Core.Extensions;
 using SmartB.Core.ViewModels.Base;
 using Xamarin.Forms;
-
-
 namespace SmartB.Core.ViewModels
 {
     public class LoginViewModel : ViewModelBase
@@ -19,11 +16,10 @@ namespace SmartB.Core.ViewModels
         private IJobDataService _jobDataSevice;
         private ISettingsService _settingsService;
         private IUsersDataService _userDataService;
-     //   private IDeviceDataService _deviceDataService;
+        //private IDeviceDataService _deviceDataService;
         private string _username;
         private string _password;
         private ObservableCollection<string> _names;
-
         public LoginViewModel(IConnectionService connectionService, INavigationService navigationService, IDialogService dialogService, 
             ISettingsService settingsService, IAuthenticationService authenticationService, IUsersDataService usersDataService, IJobDataService jobDataService) 
             : base(connectionService, navigationService, dialogService)
@@ -34,11 +30,8 @@ namespace SmartB.Core.ViewModels
             _userDataService = usersDataService; 
             //_deviceDataService = deviceDataService;
         }
-
         public ICommand LoginCommand => new Command(OnLogin);
         public ICommand ScannerCommand => new Command(OnScan);
-
-
         public ObservableCollection<string> NamesList
         {
             get { return _names; }
@@ -48,7 +41,6 @@ namespace SmartB.Core.ViewModels
                 OnPropertyChanged();
             }
         }
-
         public string Password
         {
             get { return _password; }
@@ -71,7 +63,6 @@ namespace SmartB.Core.ViewModels
         {
             NamesList = (await _userDataService.GetAllUserNames()).ToObservableCollection();
         }
-
         //private async Task DeviceInfo()
         //{
         //    try
@@ -107,7 +98,6 @@ namespace SmartB.Core.ViewModels
         //    }
 
         //}
-
         private async void OnLogin(object obj)
         {
             IsBusy = true;
@@ -118,14 +108,12 @@ namespace SmartB.Core.ViewModels
                 try
                 {
                     var authenticationResponse = await _authenticationService.Authenticate(UserName, Password);
-
                     if (authenticationResponse.IsAuthenticated)
                     {
                         var timeWhenUserLogged = await _jobDataSevice.GetServerDateTime();
                         // we store the Id to know if the user is already logged in to the application
                         _settingsService.UserIdSetting = authenticationResponse.User.Id.ToString();
                         _settingsService.UserNameSetting = authenticationResponse.User.Angajat;
-
                         var strSector = string.Empty;
                         var idSector = authenticationResponse.User.IdSector;
                         if (idSector == 1)
@@ -138,20 +126,14 @@ namespace SmartB.Core.ViewModels
                             strSector = "Tessitura";
                         else if (idSector == 8)
                             strSector = "Sartoria";
-
                         _settingsService.UserSectorSettings = strSector;
                         _settingsService.UserLineSettings = authenticationResponse.User.Linie;
                         _settingsService.UserLoginDateSettings = timeWhenUserLogged.ToString();
-
-
                         var user = authenticationResponse.User;
                         user.Active = true;
                         user.LastTimeLogged = timeWhenUserLogged;
-
                         await _userDataService.UpdateUserActivity(user.Id.ToString(), user);
                         //      await DeviceInfo();
-                      
-                       
                         await _navigationService.NavigateToAsync<MainViewModel>();
                         dialog.Hide();
                         IsBusy = false;
@@ -178,7 +160,6 @@ namespace SmartB.Core.ViewModels
                     "OK");
             }
         }
-
         private async void OnScan(object obj)
         {
            await _navigationService.NavigateToAsync<ScannerViewModel>();

@@ -2,7 +2,6 @@
 using System.Globalization;
 using SmartB.Core.Enumerations;
 using Xamarin.Forms;
-
 namespace SmartB.Core.Converters
 {
     public class MenuIconConverter: IValueConverter
@@ -10,7 +9,6 @@ namespace SmartB.Core.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var type = (MenuItemType) value;
-
             switch (type)
             {
                 case MenuItemType.Home:
@@ -27,7 +25,6 @@ namespace SmartB.Core.Converters
                     return string.Empty;
             }
         }
-
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             //Not needed here

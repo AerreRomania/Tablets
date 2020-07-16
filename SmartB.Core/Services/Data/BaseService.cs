@@ -3,18 +3,15 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Akavache;
 using SmartB.Core.Models;
-
 namespace SmartB.Core.Services.Data
 {
     public class BaseService
     {
         protected IBlobCache Cache;
-
         public BaseService(IBlobCache cache)
         {
             Cache = cache ?? BlobCache.LocalMachine;
         }
-
         public async Task<T> GetFromCache<T>(string cacheName)
         {
             try
@@ -27,7 +24,6 @@ namespace SmartB.Core.Services.Data
                 return default(T);
             }
         }
-
         public void InvalidateCache()
         {
             Cache.InvalidateAllObjects<Angajati>();

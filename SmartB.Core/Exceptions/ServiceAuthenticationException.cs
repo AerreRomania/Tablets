@@ -1,5 +1,4 @@
 ﻿using System;
-
 namespace SmartB.Core.Exceptions
 {
     public class ServiceAuthenticationException : Exception

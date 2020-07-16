@@ -1,6 +1,5 @@
 ﻿using System.Windows.Input;
 using Xamarin.Forms;
-
 namespace SmartB.Core.Behaviors
 {
     public sealed class ItemTappedCommandListView
@@ -14,7 +13,6 @@ namespace SmartB.Core.Behaviors
                 BindingMode.OneWay,
                 null,
                 PropertyChanged);
-
         private static void PropertyChanged(BindableObject bindable, object oldValue, object newValue)
         {
             if (bindable is ListView listView)
@@ -23,11 +21,9 @@ namespace SmartB.Core.Behaviors
                 listView.ItemTapped += ListViewOnItemTapped;
             }
         }
-
         private static void ListViewOnItemTapped(object sender, ItemTappedEventArgs e)
         {
             var list = sender as ListView;
-
             if (list != null && list.IsEnabled && !list.IsRefreshing)
             {
                 list.SelectedItem = null;
@@ -38,12 +34,10 @@ namespace SmartB.Core.Behaviors
                 }
             }
         }
-
         public static ICommand GetItemTappedCommand(BindableObject bindableObject)
         {
             return (ICommand)bindableObject.GetValue(ItemTappedCommandProperty);
         }
-
         public static void SetItemTappedCommand(BindableObject bindableObject, object value)
         {
             bindableObject.SetValue(ItemTappedCommandProperty, value);

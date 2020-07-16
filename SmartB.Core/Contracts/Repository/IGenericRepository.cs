@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-
 namespace SmartB.Core.Contracts.Repository
 {
     public interface IGenericRepository

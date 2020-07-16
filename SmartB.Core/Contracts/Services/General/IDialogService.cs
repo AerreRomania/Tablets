@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Acr.UserDialogs;
-
 namespace SmartB.Core.Contracts.Services.General
 {
     public interface IDialogService

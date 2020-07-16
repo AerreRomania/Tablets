@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Plugin.Settings.Abstractions;
-
 namespace SmartB.Core.Extensions
 {
     public static class SettingsExtensions
@@ -11,7 +10,6 @@ namespace SmartB.Core.Extensions
         {
             string serialized = settings.GetValueOrDefault(key, string.Empty);
             T result = @default;
-
             try
             {
                 GetSerializerSettings();
@@ -21,28 +19,22 @@ namespace SmartB.Core.Extensions
             {
                 System.Diagnostics.Debug.WriteLine($"Error deserializing settings value: {ex}");
             }
-
             return result;
         }
-
-
         public static bool AddOrUpdateValue<T>(this ISettings settings, string key, T obj) where T : class
         {
             try
             {
                 JsonSerializerSettings serializeSettings = GetSerializerSettings();
                 string serialized = JsonConvert.SerializeObject(obj, serializeSettings);
-
                 return settings.AddOrUpdateValue(key, serialized);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error serializing settings value: {ex}");
             }
-
             return false;
         }
-
         private static JsonSerializerSettings GetSerializerSettings()
         {
             return new JsonSerializerSettings

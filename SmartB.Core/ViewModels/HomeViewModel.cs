@@ -11,7 +11,6 @@ using SmartB.Core.Models;
 using SmartB.Core.ViewModels.Base;
 using SmartB.Core.Views;
 using Xamarin.Forms;
-
 namespace SmartB.Core.ViewModels
 {
     public class HomeViewModel : ViewModelBase
@@ -25,7 +24,6 @@ namespace SmartB.Core.ViewModels
         private IUsersDataService _usersService;
         private IDeviceDataService _deviceDataService;
         private IDeviceInfoService _deviceInfoService;
-
         public HomeViewModel(IConnectionService connectionService,
                              INavigationService navigationService, 
                              IDialogService dialogService,
@@ -50,16 +48,13 @@ namespace SmartB.Core.ViewModels
             _usersService = usersService;
             _deviceDataService = deviceDataService;
             _deviceInfoService = deviceInfoService;
-
         }
-
         public string EmployeeName =>  _settingsService.UserNameSetting;
         public string Line => _settingsService.UserLineSettings;
         public string Sector =>   _settingsService.UserSectorSettings;
         public ICommand AddJobCommand => new Command(OnAddJobCommand);
         public ICommand ScanCommand => new Command(OnScanCommand);
         public ICommand RefreshData => new Command(OnRefreshData);
-
         private async void OnRefreshData()
         {
           var dialog =  _dialogService.ShowProgressDialog("Refreshing Data \n Please wait...");
@@ -67,7 +62,6 @@ namespace SmartB.Core.ViewModels
           await FetchData();
           dialog.Hide();
         }
-
         public override async Task InitializeAsync(object data)
         {
             var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
@@ -81,13 +75,10 @@ namespace SmartB.Core.ViewModels
                         await _navigationService.NavigateToAsync<ManichinoViewModel>();
                         return;
                     }
-
                     await _navigationService.NavigateToAsync<JobViewModel>();
                     return;
                 }
-
                 await FetchData();
-
             }
             catch (HttpRequestExceptionEx e)
             {
@@ -98,7 +89,6 @@ namespace SmartB.Core.ViewModels
                 //ignore
             }
         }
-
         private async Task FetchData()
         {
             try
@@ -115,17 +105,12 @@ namespace SmartB.Core.ViewModels
                     sector = 7;
                 else if (strSector == "Sartoria")
                     sector = 8;
-
                 Machines = (await _masiniService.GetMachinesAsync(sector, _settingsService.UserLineSettings)).ToObservableCollection();
-
                 Orders = (await _orderService.GetOrdersAsync(sector)).ToObservableCollection();
-
                 var machineId = _settingsService?.MachineIdSettings.ToInteger();
-
                 SelectedMachine = _machines.Any(m => m.Id == machineId)
                     ? Machines?.FirstOrDefault(m => m.Id == machineId)
                     : null;
-
                 SelectedOrder = _settingsService != null && _settingsService.CommessaFromBarcode != string.Empty
                     ? (await _orderService.GetOrderWithName(_settingsService.CommessaFromBarcode))
                     : null;
@@ -139,7 +124,6 @@ namespace SmartB.Core.ViewModels
                 //ignore
             }
         }
-
         private void AddMachineToSettings(Masini selectedMachine)
         {
             if (selectedMachine == null) return;
@@ -149,7 +133,6 @@ namespace SmartB.Core.ViewModels
             _settingsService.MachineNameSettings = selectedMachine.Descriere;
             _settingsService.MachineLineSettings = selectedMachine.Linie;
         }
-
         private void AddOrderToSettings(Comenzi order)
         {
             if (order == null)
@@ -159,7 +142,6 @@ namespace SmartB.Core.ViewModels
             }
             _settingsService.CommessaFromBarcode = order.NrComanda;
         }
-
         private async Task<bool> IsCurrentUserLoggedFromYesterday()
         {
             try
@@ -169,37 +151,28 @@ namespace SmartB.Core.ViewModels
                 if (Convert.ToDateTime(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Logging out... ");
                 dialog.Show();
-
-
                 var user =
                     await _usersService.GetUser(_settingsService.UserIdSetting);
-
                 if (user.Active)
                 {
                     user.Active = false;
                     await _usersService.UpdateUserActivity(user.Id.ToString(), user);
                 }
-
                 var machine =
                     await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-
                 if (machine.Active)
                 {
                     machine.Active = false;
                     await _masiniService.UpdateMachineActivity(machine.Id, machine);
                 }
-
                 //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
                 //if (device.Active)
                 //{
                 //    device.Active = false;
                 //    await _deviceDataService.UpdateDevice(device, _settingsService.DeviceIdSettings);
                 //}
- 
                 _settingsService.RemoveSettings();
-          
                 dialog.Hide();
-
                 await _navigationService.ClearBackStack();
                 await _navigationService.NavigateToAsync<LoginViewModel>();
             }
@@ -209,7 +182,6 @@ namespace SmartB.Core.ViewModels
             }
             return true;
         }
-
         private async Task GetArticleForOrder()
         {
             try
@@ -219,7 +191,6 @@ namespace SmartB.Core.ViewModels
                 {
                     Article = articleEntity;
                 }
-                
             }
             catch (HttpRequestExceptionEx e)
             {
@@ -230,13 +201,11 @@ namespace SmartB.Core.ViewModels
                 //ignore
             }
         }
-
         private async Task GetPhasesForArticleAndMachine(int articleId, string machineCode)
         {
             try
             {
                 var articlePhases = await _phaseService.GetPhasesAsync(articleId, machineCode);
-
                 if (articlePhases == null)
                 {
                         await _dialogService.ShowDialog("There are no phases for the selected article.", "Info", "OK");
@@ -287,7 +256,6 @@ namespace SmartB.Core.ViewModels
         //                "OK");
         //    }
         //}
-
         private async Task SaveJob()
         {
             try
@@ -308,14 +276,10 @@ namespace SmartB.Core.ViewModels
                     Inchis = true,
                     FirstWrite = null
                 };
-
                 machine.Active = true;
                 machine.LastTimeUsed = jobCreationTime;
-
                 await _masiniService.UpdateMachineActivity(machine.Id, machine);
-
                 var addedJob = await _jobDataService.AddJob(job);
-
                 _settingsService.JobIdSettings = addedJob.Id.ToString();
                 _settingsService.JobsIdSettings += addedJob.Id + ",";
                 _settingsService.JobNormSettings = _selectedPhase.BucatiOra.ToString();
@@ -336,12 +300,10 @@ namespace SmartB.Core.ViewModels
                     "OK");
             }
         }
-
         private async void OnAddJobCommand(object o)
         {
             var dialog = _dialogService.ShowProgressDialog("Creating job... ");
             dialog.Show();
-
             if (!string.IsNullOrEmpty(_settingsService.UserIdSetting) &&
                 !string.IsNullOrEmpty(_settingsService.MachineIdSettings)
                 && _selectedOrder != null && _selectedPhase != null)
@@ -382,15 +344,11 @@ namespace SmartB.Core.ViewModels
         {
             await _navigationService.NavigateToAsync<ScannerViewModel>();
         }
-
-
         #region Properties
         private Articole _article;
-
         private ObservableCollection<Masini> _machines;
         private ObservableCollection<Comenzi> _orders;
         private ObservableCollection<Phases> _phases;
-
         private Masini _selectedMachine;
         private Comenzi _selectedOrder;
         private Phases _selectedPhase;
