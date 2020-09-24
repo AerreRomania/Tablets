@@ -40,6 +40,11 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
+                if(_settingsService.UserLineSettings != _settingsService.MachineLineSettings)
+                {
+                    await _dialogService.ShowDialog("You can work only in your line.", "Warning", "OK");
+                    return;
+                }
                 var dialog = _dialogService.ShowProgressDialog("Please wait...");
                 dialog.Show();
                 var currentTime = await _jobDataService.GetServerDateTime();

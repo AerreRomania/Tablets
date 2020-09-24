@@ -80,7 +80,6 @@ namespace SmartB.Core.ViewModels
             await FillLocalJobData();
             var normHour = _settingsService.JobNormSettings.ToInteger();
             var clickWorth = _settingsService.OneClickWorthSettings.ToInteger();
-
             if (clickWorth != 1)
             {
                 if (_settingsService.IsNormCalculatedSettings.Equals("true"))
@@ -104,16 +103,13 @@ namespace SmartB.Core.ViewModels
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Logging out... ");
                 dialog.Show();
-
                 await UpdateJobLastWrite();
-
                 var user = await _usersService.GetUser(_settingsService.UserIdSetting);
                 if (user.Active)
                 {
                     user.Active = false;
                     await _usersService.UpdateUserActivity(user.Id.ToString(), user);
                 }
-
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
                 if (machine.Active)
                 {
@@ -126,11 +122,8 @@ namespace SmartB.Core.ViewModels
                 //    device.Active = false;
                 //    await _deviceDataService.UpdateDevice(device, _settingsService.DeviceIdSettings);
                 //}
-
                 _settingsService.RemoveSettings();
-
                 dialog.Hide();
-
                 await _navigationService.ClearBackStack();
                 await _navigationService.NavigateToAsync<LoginViewModel>();
             }
@@ -150,9 +143,7 @@ namespace SmartB.Core.ViewModels
             try
             {
                 var totalpauses = new TimeSpan();
-
                 var pauses = await _pauseService.GetPauses(job.Id.ToString());
-
                 if (pauses!=null)
                 {
                     foreach (var pause in pauses)
@@ -161,32 +152,26 @@ namespace SmartB.Core.ViewModels
                         {
                             totalpauses += pause.EndPause - pause.StartPause;
                         }
-
                         if (pause.Type == "Pause 2")
                         {
                             totalpauses += pause.EndPause - pause.StartPause;
                         }
                     }
                 }
-
                 var span = job.LastWrite - job.FirstWrite - totalpauses;
-
                 if (span != null)
                 {
                     var norm = _settingsService.JobNormSettings.ToInteger();
                     var currentTime = await _jobService.GetServerDateTime();
                     double normForHours = _counter / norm * 100f;
                     var efficiency = span.Value.Ticks == 0 ? 0.0 : normForHours;
-
                     var jobEfficiency = new JobEfficiency
                     {
                         Efficiency = efficiency,
                         RealizariID = job.Id,
                         SpentTime = span.Value.Ticks
                     };
-
                     var efficiencyEntity = await _jobEfficiency.AddJobEfficiency(jobEfficiency);
-
                     _settingsService.EfficiencyIdsSettings += $"{efficiencyEntity.EfficiencyID},";
                 }
             }
@@ -226,7 +211,6 @@ namespace SmartB.Core.ViewModels
                     H22 = _settingsService.H22Settings.ToInteger(),
                     H23 = _settingsService.H23Settings.ToInteger()
                 };
-
                 EfficiencyForHours = new EfficiencyForHours
                 {
                     H6Efficiency = _settingsService.H6EfficiencySettings.ToDouble(),
@@ -248,7 +232,6 @@ namespace SmartB.Core.ViewModels
                     H22Efficiency = _settingsService.H22EfficiencySettings.ToDouble(),
                     H23Efficiency = _settingsService.H23EfficiencySettings.ToDouble()
                 };
-
                 Norm = _settingsService.JobNormSettings;
                 EfficiencyTotal = _settingsService.TotalEfficiencySettings.ToDouble();
                 Counter = _settingsService.CounterSettings.ToInteger();
@@ -269,12 +252,10 @@ namespace SmartB.Core.ViewModels
             var lastClick = await _jobService.GetLastClickForJob(job.Id.ToString());
             var span = DateTime.Parse(_settingsService.UserLoginDateSettings).Day != currentDate.Day ? lastClick - firstClick
                 : currentDate - firstClick;
-
             if (span != null && span.Value.TotalHours > 1)
             {
                 return norm * span.Value.TotalHours;
             }
-
             return norm;
         }
         private async void OnPauseJobAcceptCommand(object obj)
@@ -306,16 +287,13 @@ namespace SmartB.Core.ViewModels
                     await _dialogService.ShowDialog("Please select pause type", "Information", "OK");
                     return;
                 }
-
                 _pause = new Pause
                 {
                     Type = PauseType,
                     StartPause = await _jobService.GetServerDateTime(),
                     RealizareID = Convert.ToInt32(_settingsService.JobIdSettings)
                 };
-
                 await StartStopwatch();
-
             }
             catch (HttpRequestExceptionEx e)
             {
@@ -337,32 +315,36 @@ namespace SmartB.Core.ViewModels
                 await ShiftControl(DateTime.Now.Hour);
                 if (_connectionService.IsConnected)
                 {
-                    string barCode = _settingsService.CommessaFromBarcode;
-                    var commessa = await _commessaService.GetCommessaTimAsync(barCode);
-                    var tmpCommessa = await _comenziService.GetOrderWithName(Commessa);
-                    var article = await _articleService.GetArticleAsync(tmpCommessa.IdArticol);
-                    var phases = await _phaseService.GetPhasesAsync(article.Id, MachineCode);
-                    int producedQuantity =
-                        Hours.H6 + Hours.H7 + Hours.H8 +
-                        Hours.H9 + Hours.H10 + Hours.H11 +
-                        Hours.H12 + Hours.H13 + Hours.H14 +
-                        Hours.H15 + Hours.H16 + Hours.H17 +
-                        Hours.H18 + Hours.H19 + Hours.H20 +
-                        Hours.H21 + Hours.H22 + Hours.H23;
-                    if (producedQuantity >= commessa.Quantity)
-                    {
-                        //TODO: Make dialog with text box for pin managers need to insert to continue the process
-                        var dialogResult = await _dialogService.ShowConfirmationDialog(
-                        "Quantity overdraft",
-                        "You have exceeded orders quantity. Would you like to continue?",
-                        "Yes", "No");
-                        if (!dialogResult)
-                            return;
-                    }
+                    //string barCode = _settingsService.CommessaFromBarcode;
+                    //var commessa = await _commessaService.GetCommessaTimAsync(barCode);
+                    //var tmpCommessa = await _comenziService.GetOrderWithName(Commessa);
+                    //var article = await _articleService.GetArticleAsync(tmpCommessa.IdArticol);
+                    //var phases = await _phaseService.GetPhasesAsync(article.Id, MachineCode);
+                    //int producedQuantity =
+                    //    Hours.H6 + Hours.H7 + Hours.H8 +
+                    //    Hours.H9 + Hours.H10 + Hours.H11 +
+                    //    Hours.H12 + Hours.H13 + Hours.H14 +
+                    //    Hours.H15 + Hours.H16 + Hours.H17 +
+                    //    Hours.H18 + Hours.H19 + Hours.H20 +
+                    //    Hours.H21 + Hours.H22 + Hours.H23;
+                    //if (producedQuantity >= commessa.Quantity)
+                    //{
+                    //    var result = _dialogService.ShowPromptDialog("Please enter the pin to continue.", "Confirmation", "Ok", "Cancel", "Pin");
+                    //    if (!result.Result.Ok)
+                    //        return;
+                    //    else
+                    //    {
+                    //        string pin = result.Result.Text;
+                    //    }
+                    //    //TODO: Make dialog with text box for pin managers need to insert to continue the process
+                    //    //var dialogResult = await _dialogService.ShowConfirmationDialog(
+                    //    //"Quantity overdraft",
+                    //    //"You have exceeded orders quantity. Would you like to continue?",
+                    //    //"Yes", "No");
+                    //}
                     var normHour = _settingsService.JobNormSettings.ToInteger();
                     var idleClickTime = new TimeSpan(1, 0, 0).TotalMinutes / normHour;
                     var clickTime = await _jobService.GetServerDateTime();
-
                     var click = new Click
                     {
                         Adresa = 0410,
@@ -371,22 +353,17 @@ namespace SmartB.Core.ViewModels
                         IdRealizare = _settingsService.JobIdSettings.ToInteger(),
                         IdDifetto = null
                     };
-
                     Counter++;
                     TotalPieces++;
                     await CheckMachineState();
                     await PiecesByHour(clickTime);
                     await _butoaneService.AddClick(click);
-                  //  await UpdateJobFirstWrite(clickTime);
-                  await WeightedAverage(idleClickTime, clickTime);
-                  await EfficiencyByHour(clickTime);
-                    
+                    //  await UpdateJobFirstWrite(clickTime);
+                    await WeightedAverage(idleClickTime, clickTime);
+                    await EfficiencyByHour(clickTime);
                     _settingsService.LastClickSetting = clickTime.ToString();
-
-
-                    await WaitAndExecute(5000/*(int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3*/,
+                    await WaitAndExecute(15000/*(int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3*/,
                         EnableClickPieceButton);
-
                     _settingsService.CounterSettings = Counter.ToString();
                     _settingsService.TotalEfficiencySettings = EfficiencyTotal.ToString();
                     _settingsService.TotalPiecesSettings = TotalPieces.ToString();
@@ -434,7 +411,6 @@ namespace SmartB.Core.ViewModels
                 "Do you want to stop your current job?", "Yes", "No");
             if (!action) return;
             var dialog = _dialogService.ShowProgressDialog("Please Wait...");
-
             try
             {
                 dialog.Show();
@@ -476,12 +452,9 @@ namespace SmartB.Core.ViewModels
         private async Task PiecesByHour(DateTime date)
         {
             await Task.Delay(100);
-
             Hours[$"H{date.Hour}"] = Counter <= 1 ? Hours[$"H{date.Hour}"] = 1 : (int)Hours[$"H{date.Hour}"] + 1;
             HourCounter = (int)Hours[$"H{date.Hour}"];
-
             OnPropertyChanged(nameof(Hours));
-
             switch (date.Hour)
             {
                 case 6:
@@ -543,11 +516,8 @@ namespace SmartB.Core.ViewModels
         private async Task EfficiencyByHour(DateTime date)
         {
             await Task.Delay(100);
-
             EfficiencyForHours[$"H{date.Hour}Efficiency"] = Counter <= 1 ? 0.0 : EfficiencyHour;
-
             OnPropertyChanged(nameof(EfficiencyForHours));
-
             switch (date.Hour)
             {
                 case 6:
@@ -684,7 +654,6 @@ namespace SmartB.Core.ViewModels
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
                 var lastWrite = await _jobService.GetLastClickForJob(_settingsService.JobIdSettings);
                 var currentTime = await _jobService.GetServerDateTime();
-
                 if (lastWrite == DateTime.Parse("11/11/2011 12:00:00 AM"))
                 {
                     job.LastWrite = currentTime;
@@ -700,16 +669,13 @@ namespace SmartB.Core.ViewModels
                     job.LastWrite = lastWrite;
                     job.Closed = currentTime;
                 }
-
                 await _jobService.UpdateJob(job.Id.ToString(), job);
                 await AddEfficiencyForJob(job);
-
                 if (machine.Active)
                 {
                     machine.Active = false;
                     await _masiniService.UpdateMachineActivity(machine.Id, machine);
                 }
-
                 _settingsService.JobIdSettings = null;
                 _settingsService.JobNormSettings = null;
                 _settingsService.CounterSettings = null;
@@ -740,40 +706,32 @@ namespace SmartB.Core.ViewModels
                     var previousJobs = new List<Job>();
                     //var pauses = new List<Pause>();
                     var previousJobsIds = _settingsService.JobsIdSettings.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
-
                     for (var i = 0; i < finishedJobsIds.Length; i++)
                     {
                         jobEfficiencies.Add(await _jobEfficiency.GetJobEfficiency(finishedJobsIds[i]));
                     }
-
                     for (int i = 0; i < previousJobsIds.Length; i++)
                     {
                         previousJobs.Add(await _jobService.GetJob(previousJobsIds[i]));
                     }
-
                     var weightedAverage = 0.0;
                     var firstJob = previousJobs.FirstOrDefault();
                     var totalTime = await _jobService.GetServerDateTime() - firstJob?.FirstWrite;
-
                     foreach (var job in jobEfficiencies.Where(job => job.SpentTime != 0))
                     {
                         if (totalTime != null)
                             weightedAverage += TimeSpan.FromTicks(job.SpentTime).TotalMinutes / totalTime.Value.TotalMinutes * job.Efficiency;
                     }
-
                     EfficiencyTotal = weightedAverage;
                 }
                 else
                 {
                     EfficiencyTotal = _counter / normHours * 100f;
                 }
-
                 EfficiencyCurrent = _settingsService.LastClickSetting != string.Empty ?
                    TimeSpan.FromMinutes(normInMinutes).TotalSeconds / clickTime.Subtract(DateTime.Parse(_settingsService.LastClickSetting)).TotalSeconds * 100f
                     : 100;
-
                 EfficiencyHour = (double)HourCounter / norm * 100f;
-
                 if (EfficiencyCurrent > 0 && EfficiencyCurrent < 70)
                 {
                     BackgroundColorButton = Color.Crimson;
@@ -786,7 +744,6 @@ namespace SmartB.Core.ViewModels
                 {
                     BackgroundColorButton = Color.ForestGreen;
                 }
-
                 //Bluetooth Colors
                 //if (EfficiencyHour > 0 && EfficiencyHour < 70)
                 //{
@@ -1143,7 +1100,6 @@ namespace SmartB.Core.ViewModels
             {
                 if (value == _backgroundColorButton)
                     return;
-
                 _backgroundColorButton = value;
                 OnPropertyChanged();
             }

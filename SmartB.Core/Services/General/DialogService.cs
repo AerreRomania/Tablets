@@ -5,6 +5,14 @@ namespace SmartB.Core.Services.General
 {
     public class DialogService : IDialogService
     {
+        public Task<PromptResult> ShowPromptDialog(string message, string title,
+                                     string confirmationButton, string cancelButton,
+                                     string pin)
+        {
+            return UserDialogs.Instance.PromptAsync(message, title,
+                                                    confirmationButton, cancelButton,
+                                                    pin);
+        }
         public Task ShowDialog(string message, string title, string buttonLabel)
         {
             return UserDialogs.Instance.AlertAsync(message, title, buttonLabel);
