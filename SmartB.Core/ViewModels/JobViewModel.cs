@@ -27,9 +27,6 @@ namespace SmartB.Core.ViewModels
         private IUsersDataService _usersService;
         private IDeviceDataService _deviceDataService;
         readonly ICommessaTimService _commessaService;
-        readonly IComenziService _comenziService;
-        readonly IArticoleService _articleService;
-        readonly IPhaseService _phaseService;
         public JobViewModel(IConnectionService connectionService, 
                             INavigationService navigationService, 
                             IDialogService dialogService, 
@@ -41,10 +38,7 @@ namespace SmartB.Core.ViewModels
                             IMasiniService masiniService,
                             IUsersDataService usersDataService, 
                             IDeviceDataService deviceDataService,
-                            ICommessaTimService commessaService,
-                            IComenziService comenziService,
-                            IArticoleService articleService,
-                            IPhaseService phaseService) : 
+                            ICommessaTimService commessaService) : 
                             base(connectionService, navigationService, dialogService)
         {
             _jobEfficiency = jobEfficiency;
@@ -56,9 +50,7 @@ namespace SmartB.Core.ViewModels
             _usersService = usersDataService;
             _deviceDataService = deviceDataService;
             _commessaService = commessaService;
-            _comenziService = comenziService;
-            _articleService = articleService;
-            _phaseService = phaseService;
+            _workPermitOverQuantity = false;
         }
         public string Commessa => _settingsService.CommessaFromBarcode;
         public string EmployeeName => _settingsService.UserNameSetting;
@@ -111,11 +103,13 @@ namespace SmartB.Core.ViewModels
                     await _usersService.UpdateUserActivity(user.Id.ToString(), user);
                 }
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-                if (machine.Active)
-                {
-                    machine.Active = false;
-                    await _masiniService.UpdateMachineActivity(machine.Id, machine);
-                }
+
+                //if (machine.Active)
+                //{
+                //    machine.Active = false;
+                //    await _masiniService.UpdateMachineActivity(machine.Id, machine);
+                //} //last update
+
                 //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
                 //if (device.Active)
                 //{
@@ -315,33 +309,42 @@ namespace SmartB.Core.ViewModels
                 await ShiftControl(DateTime.Now.Hour);
                 if (_connectionService.IsConnected)
                 {
-                    //string barCode = _settingsService.CommessaFromBarcode;
-                    //var commessa = await _commessaService.GetCommessaTimAsync(barCode);
-                    //var tmpCommessa = await _comenziService.GetOrderWithName(Commessa);
-                    //var article = await _articleService.GetArticleAsync(tmpCommessa.IdArticol);
-                    //var phases = await _phaseService.GetPhasesAsync(article.Id, MachineCode);
-                    //int producedQuantity =
-                    //    Hours.H6 + Hours.H7 + Hours.H8 +
-                    //    Hours.H9 + Hours.H10 + Hours.H11 +
-                    //    Hours.H12 + Hours.H13 + Hours.H14 +
-                    //    Hours.H15 + Hours.H16 + Hours.H17 +
-                    //    Hours.H18 + Hours.H19 + Hours.H20 +
-                    //    Hours.H21 + Hours.H22 + Hours.H23;
-                    //if (producedQuantity >= commessa.Quantity)
-                    //{
-                    //    var result = _dialogService.ShowPromptDialog("Please enter the pin to continue.", "Confirmation", "Ok", "Cancel", "Pin");
-                    //    if (!result.Result.Ok)
-                    //        return;
-                    //    else
-                    //    {
-                    //        string pin = result.Result.Text;
-                    //    }
-                    //    //TODO: Make dialog with text box for pin managers need to insert to continue the process
-                    //    //var dialogResult = await _dialogService.ShowConfirmationDialog(
-                    //    //"Quantity overdraft",
-                    //    //"You have exceeded orders quantity. Would you like to continue?",
-                    //    //"Yes", "No");
-                    //}
+                    string barCode = _settingsService.CommessaFromBarcode;
+                    var commessa = await _commessaService.GetCommessaTimAsync(barCode);
+
+                    int producedQuantity =
+                        Hours.H6 + Hours.H7 + Hours.H8 +
+                        Hours.H9 + Hours.H10 + Hours.H11 +
+                        Hours.H12 + Hours.H13 + Hours.H14 +
+                        Hours.H15 + Hours.H16 + Hours.H17 +
+                        Hours.H18 + Hours.H19 + Hours.H20 +
+                        Hours.H21 + Hours.H22 + Hours.H23;
+
+                    if (producedQuantity > commessa.Quantity && !_workPermitOverQuantity)
+                    {
+                        var result = _dialogService.ShowPromptDialog("Please enter the pin to continue.", "Confirmation", "Ok", "Cancel", "Pin");
+                        if (!result.Result.Ok)
+                            return;
+                        else
+                        {
+                            string pin = result.Result.Text;
+                            if (string.IsNullOrEmpty(pin))
+                            {
+                                bool isManager = await _usersService.GetManagerAsync(pin);
+
+                                if(isManager)
+                                    _workPermitOverQuantity = true;
+                            }
+                            else
+                                return;
+                        }
+                        //TODO: Make dialog with text box for pin managers need to insert to continue the process
+                        //var dialogResult = await _dialogService.ShowConfirmationDialog(
+                        //"Quantity overdraft",
+                        //"You have exceeded orders quantity. Would you like to continue?",
+                        //"Yes", "No");
+                    }
+
                     var normHour = _settingsService.JobNormSettings.ToInteger();
                     var idleClickTime = new TimeSpan(1, 0, 0).TotalMinutes / normHour;
                     var clickTime = await _jobService.GetServerDateTime();
@@ -671,11 +674,13 @@ namespace SmartB.Core.ViewModels
                 }
                 await _jobService.UpdateJob(job.Id.ToString(), job);
                 await AddEfficiencyForJob(job);
-                if (machine.Active)
-                {
-                    machine.Active = false;
-                    await _masiniService.UpdateMachineActivity(machine.Id, machine);
-                }
+
+                //if (machine.Active)
+                //{
+                //    machine.Active = false;
+                //    await _masiniService.UpdateMachineActivity(machine.Id, machine);
+                //}
+
                 _settingsService.JobIdSettings = null;
                 _settingsService.JobNormSettings = null;
                 _settingsService.CounterSettings = null;
@@ -802,6 +807,7 @@ namespace SmartB.Core.ViewModels
         }
         #endregion
         #region Properties
+        private bool _workPermitOverQuantity;
         #region StopWatch Properties
 
         private bool _canShowStopwatchPopup;

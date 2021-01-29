@@ -10,5 +10,6 @@ namespace SmartB.Core.Models
         public string CodeAndName { get; set; }
         public bool Active { get; set; }
         public DateTime? LastTimeUsed { get; set; }
+        public bool Occupied { get; set; }
     }
 }

@@ -278,11 +278,16 @@ namespace SmartB.Core.ViewModels
                     await _usersDataService.UpdateUserActivity(user.Id.ToString(), user);
                 }
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-                if (machine.Active)
-                {
-                    machine.Active = false;
-                    await _masiniService.UpdateMachineActivity(machine.Id, machine);
-                }
+
+
+                //if (machine.Active)
+                //{
+                //    machine.Active = false;
+                //    await _masiniService.UpdateMachineActivity(machine.Id, machine);
+                //}
+
+
+
                 //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
                 //if (device.Active)
                 //{
@@ -653,11 +658,13 @@ namespace SmartB.Core.ViewModels
                 }
                 await _jobService.UpdateJob(job.Id.ToString(), job);
                 await AddEfficiencyForJob(job);
-                if (machine.Active)
-                {
-                    machine.Active = false;
-                    await _masiniService.UpdateMachineActivity(machine.Id, machine);
-                }
+
+                //if (machine.Active)
+                //{
+                //    machine.Active = false;
+                //    await _masiniService.UpdateMachineActivity(machine.Id, machine);
+                //}
+
                 _settingsService.JobIdSettings = null;
                 _settingsService.JobNormSettings = null;
                 _settingsService.CounterSettings = null;

@@ -49,13 +49,13 @@ namespace SmartB.Core.Services.Data
            };
            return await _genericRepository.GetAsync<Masini>(builder.ToString());
         }
-        public async Task<Masini> UpdateMachineActivity(int id, Masini machineToUpdate)
+        public async Task UpdateMachineActivity(MasiniForUpdate machineToUpdate)
         {
             UriBuilder builder = new UriBuilder(ApiConstants.BaseApiUrl)
             {
-                Path = $"{ApiConstants.UpdateMachineEndpoint}/{id}"
+                Path = $"{ApiConstants.UpdateMachineEndpoint}"
             };
-            return await _genericRepository.PutAsync(builder.ToString(), machineToUpdate);
+            await _genericRepository.PutAsync(builder.ToString(), machineToUpdate);
         }
     }
 }

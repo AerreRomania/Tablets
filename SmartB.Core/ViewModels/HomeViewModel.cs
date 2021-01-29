@@ -160,11 +160,14 @@ namespace SmartB.Core.ViewModels
                 }
                 var machine =
                     await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-                if (machine.Active)
-                {
-                    machine.Active = false;
-                    await _masiniService.UpdateMachineActivity(machine.Id, machine);
-                }
+
+                //if (machine.Active)
+                //{
+                //    machine.Active = false;
+                //    await _masiniService.UpdateMachineActivity(machine.Id, machine);
+                //} //last update
+
+
                 //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
                 //if (device.Active)
                 //{
@@ -278,7 +281,7 @@ namespace SmartB.Core.ViewModels
                 };
                 machine.Active = true;
                 machine.LastTimeUsed = jobCreationTime;
-                await _masiniService.UpdateMachineActivity(machine.Id, machine);
+                //await _masiniService.UpdateMachineActivity(machine.Id, machine); //last update
                 var addedJob = await _jobDataService.AddJob(job);
                 _settingsService.JobIdSettings = addedJob.Id.ToString();
                 _settingsService.JobsIdSettings += addedJob.Id + ",";

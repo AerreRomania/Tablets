@@ -248,31 +248,53 @@ namespace SmartB.Core.ViewModels
                 if (!string.IsNullOrWhiteSpace(_settingsService.UserNameSetting))
                 {
                     var machine = await _machineService.GetMachineAsync(id);
-                    if (machine.Linie.Contains(_settingsService.UserLineSettings))
-                    {
-                        try
-                        {
-                            // we store the Id to know if the user is already logged in to the application
-                            _settingsService.MachineIdSettings = id;
-                            _settingsService.MachineCodeSettings = machine.CodMasina;
-                            _settingsService.MachineNameSettings = machine.Descriere;
-                            _settingsService.MachineLineSettings = machine.Linie;
-                            IsBusy = false;
-                            await _navigationService.NavigateToAsync<MainViewModel>();
-                        }
-                        catch (Exception e)
-                        {
-                            await _dialogService.ShowDialog(e.ToString(), "Exception", "OK");
-                        }
-                    }
-                    else
+                    if (machine.Occupied)
                     {
                         await _navigationService.NavigateToAsync<MainViewModel>();
                         await _dialogService.ShowDialog(
-                            $"You selected wrong line. Scanned machine belong to {machine.Linie} and your selected line by manager is {_settingsService.UserLineSettings}. " +
-                            "Please contact your superior!",
-                            "Wrong line!",
+                            $"Two persons can't be logged on one machine at the same time!",
+                            "Machine is occupied!",
                             "OK");
+                    }
+                    else
+                    {
+                        if (machine.Linie.Contains(_settingsService.UserLineSettings))
+                        {
+                            try
+                            {
+                                // we store the Id to know if the user is already logged in to the application
+                                _settingsService.MachineIdSettings = id;
+                                _settingsService.MachineCodeSettings = machine.CodMasina;
+                                _settingsService.MachineNameSettings = machine.Descriere;
+                                _settingsService.MachineLineSettings = machine.Linie;
+                                IsBusy = false;
+
+                                int.TryParse(id, out var machineId);
+                                MasiniForUpdate machineToUpdate = new MasiniForUpdate
+                                {
+                                    Id = machineId,
+                                    Occupied = true
+                                };
+
+
+                                await _machineService.UpdateMachineActivity(machineToUpdate);
+
+                                await _navigationService.NavigateToAsync<MainViewModel>();
+                            }
+                            catch (Exception e)
+                            {
+                                await _dialogService.ShowDialog(e.ToString(), "Exception", "OK");
+                            }
+                        }
+                        else
+                        {
+                            await _navigationService.NavigateToAsync<MainViewModel>();
+                            await _dialogService.ShowDialog(
+                                $"You selected wrong line. Scanned machine belong to {machine.Linie} and your selected line by manager is {_settingsService.UserLineSettings}. " +
+                                "Please contact your superior!",
+                                "Wrong line!",
+                                "OK");
+                        }
                     }
                 }
                 else

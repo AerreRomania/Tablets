@@ -55,5 +55,13 @@ namespace SmartB.Core.Services.Data
             };
             return await _genericRepository.PutAsync(builder.ToString(), userToUpdate);
         }
+        public async Task<bool> GetManagerAsync(string pin)
+        {
+            UriBuilder builder = new UriBuilder(ApiConstants.BaseApiUrl)
+            {
+                Path = $"{ApiConstants.UserEndpoint}/p={pin}"
+            };
+            return await _genericRepository.GetAsync<bool>(builder.ToString());
+        }
     }
 }

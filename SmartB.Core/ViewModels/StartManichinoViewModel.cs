@@ -67,11 +67,13 @@ namespace SmartB.Core.ViewModels
                 job.LastWrite = currentTime;
                 job.Closed = currentTime;
                 await _jobDataService.UpdateJob(job.Id.ToString(), job);
-                if (machine.Active)
-                {
-                    machine.Active = false;
-                    await _masiniService.UpdateMachineActivity(machine.Id, machine);
-                }
+
+                //if (machine.Active)
+                //{
+                //    machine.Active = false;
+                //    await _masiniService.UpdateMachineActivity(machine.Id, machine);
+                //}
+
                 _settingsService.JobIdSettings = null;
                 _settingsService.JobNormSettings = null;
                 _settingsService.CounterSettings = null;
