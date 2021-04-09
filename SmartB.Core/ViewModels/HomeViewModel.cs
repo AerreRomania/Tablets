@@ -124,6 +124,13 @@ namespace SmartB.Core.ViewModels
                 //ignore
             }
         }
+        public void AddPhaseToSettings(Phases selectedPhase)
+        {
+            if (selectedPhase == null)
+                return;
+
+            _settingsService.PhaseIdSettings = selectedPhase.Id.ToString();
+        }
         private void AddMachineToSettings(Masini selectedMachine)
         {
             if (selectedMachine == null) return;
@@ -141,6 +148,7 @@ namespace SmartB.Core.ViewModels
                 return;
             }
             _settingsService.CommessaFromBarcode = order.NrComanda;
+            _settingsService.CommessaIdSettings = order.Id.ToString();
         }
         private async Task<bool> IsCurrentUserLoggedFromYesterday()
         {
@@ -421,6 +429,7 @@ namespace SmartB.Core.ViewModels
             set
             {
                 _selectedPhase = value;
+                AddPhaseToSettings(_selectedPhase);
                 OnPropertyChanged();
             }
         }

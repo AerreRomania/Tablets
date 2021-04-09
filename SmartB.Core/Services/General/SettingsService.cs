@@ -5,6 +5,8 @@ namespace SmartB.Core.Services.General
 {
     public class SettingsService : ISettingsService
     {
+        private const string CommessaId = "CommessaId";
+        private const string PhaseId = "PhaseId";
         private const string CommessaBarcode = "CommessaBarcode";
         private const string Counter = "Counter";
         private const string EfficiencyIds = "EfficiciencyIds";
@@ -370,6 +372,16 @@ namespace SmartB.Core.Services.General
         {
             get => GetItem(UserSector);
             set => AddItem(UserSector, value);
+        }
+        public string CommessaIdSettings
+        {
+            get => GetItem(CommessaId);
+            set => AddItem(CommessaId, value);
+        }
+        public string PhaseIdSettings
+        {
+            get => GetItem(PhaseId);
+            set => AddItem(PhaseId, value);
         }
         public void AddItem(string key, string value)
         {

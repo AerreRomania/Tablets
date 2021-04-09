@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Acr.UserDialogs;
+﻿using Acr.UserDialogs;
 using Android.App;
 using Android.Bluetooth;
 using Android.Content;
@@ -17,13 +11,20 @@ using Java.IO;
 using Plugin.CurrentActivity;
 using SmartB.Core.ViewModels;
 using SmartB.Core.Views;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Environment = System.Environment;
 using File = System.IO.File;
+
 namespace SmartB.Mobile.Droid
 {
     [Activity(Label = "SmartB", Icon = "@mipmap/SmartB", Theme = "@style/splashscreen", MainLauncher = true,
-        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation  , ScreenOrientation = ScreenOrientation.Portrait)]
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         private Context _context = Android.App.Application.Context;
@@ -64,23 +65,23 @@ namespace SmartB.Mobile.Droid
             });
             MessagingCenter.Subscribe<MenuViewModel>(this, "reconnectWifiOL2", sender => { ConnectToNetwork("OLTablet2"); });
             MessagingCenter.Subscribe<MenuViewModel>(this, "reconnectWifiOL", sender => { ConnectToNetwork("OLTablet"); });
-            MessagingCenter.Subscribe<JobViewModel, string>(this,  "connectToBT", (sender, args) => { ConnectToBluetooth(args);});
-            MessagingCenter.Subscribe<JobViewModel>(this,  "disconnectFromBT", sender => { DisconnectBluetooth();});
-            MessagingCenter.Subscribe<JobViewModel>(this,  "red", sender =>
-            {
-                byte[] red = Encoding.ASCII.GetBytes("r");
-                SendCommandGetResponse(red, 100);
-            });
+            MessagingCenter.Subscribe<JobViewModel, string>(this, "connectToBT", (sender, args) => { ConnectToBluetooth(args); });
+            MessagingCenter.Subscribe<JobViewModel>(this, "disconnectFromBT", sender => { DisconnectBluetooth(); });
+            MessagingCenter.Subscribe<JobViewModel>(this, "red", sender =>
+           {
+               byte[] red = Encoding.ASCII.GetBytes("r");
+               SendCommandGetResponse(red, 100);
+           });
             MessagingCenter.Subscribe<JobViewModel>(this, "yellow", sender =>
             {
                 byte[] yellow = Encoding.ASCII.GetBytes("y");
                 SendCommandGetResponse(yellow, 100);
             });
-            MessagingCenter.Subscribe<JobViewModel>(this,  "green", sender =>
-            {
-                 byte[] green = Encoding.ASCII.GetBytes("g");
-                SendCommandGetResponse(green, 100);
-            });
+            MessagingCenter.Subscribe<JobViewModel>(this, "green", sender =>
+           {
+               byte[] green = Encoding.ASCII.GetBytes("g");
+               SendCommandGetResponse(green, 100);
+           });
         }
         private void ConnectToBluetooth(string deviceName)
         {
@@ -120,7 +121,7 @@ namespace SmartB.Mobile.Droid
                     _listenerThread.Start();
                 }
                 _isBluetoothConnected = true;
-                byte[] init = {0x63};
+                byte[] init = { 0x63 };
                 SendCommandGetResponse(init, 100);
             }
             catch
@@ -215,7 +216,7 @@ namespace SmartB.Mobile.Droid
         {
             string networkSSID = SSID;
             string networkPass = "MercuryNicu";
-            WifiConfiguration wifiConfig = new WifiConfiguration {Ssid = $"\"{networkSSID}\"", PreSharedKey = $"\"{networkPass}\""};
+            WifiConfiguration wifiConfig = new WifiConfiguration { Ssid = $"\"{networkSSID}\"", PreSharedKey = $"\"{networkPass}\"" };
             WifiManager wifiManager = (WifiManager)_context.GetSystemService(Context.WifiService);
             int netId = wifiManager.AddNetwork(wifiConfig);
             wifiManager.Disconnect();

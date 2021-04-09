@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using SmartB.Core.Contracts.Services.Data;
+﻿using SmartB.Core.Contracts.Services.Data;
 using SmartB.Core.Contracts.Services.General;
 using SmartB.Core.Exceptions;
 using SmartB.Core.Extensions;
 using SmartB.Core.ViewModels.Base;
+using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms;
+
 namespace SmartB.Core.ViewModels
 {
     public class LoginViewModel : ViewModelBase
@@ -20,14 +21,14 @@ namespace SmartB.Core.ViewModels
         private string _username;
         private string _password;
         private ObservableCollection<string> _names;
-        public LoginViewModel(IConnectionService connectionService, INavigationService navigationService, IDialogService dialogService, 
-            ISettingsService settingsService, IAuthenticationService authenticationService, IUsersDataService usersDataService, IJobDataService jobDataService) 
+        public LoginViewModel(IConnectionService connectionService, INavigationService navigationService, IDialogService dialogService,
+            ISettingsService settingsService, IAuthenticationService authenticationService, IUsersDataService usersDataService, IJobDataService jobDataService)
             : base(connectionService, navigationService, dialogService)
         {
             _jobDataSevice = jobDataService;
             _settingsService = settingsService;
             _authenticationService = authenticationService;
-            _userDataService = usersDataService; 
+            _userDataService = usersDataService;
             //_deviceDataService = deviceDataService;
         }
         public ICommand LoginCommand => new Command(OnLogin);
@@ -94,7 +95,7 @@ namespace SmartB.Core.ViewModels
         //    }
         //    catch (HttpRequestExceptionEx)
         //    {
-               
+
         //    }
 
         //}
@@ -142,8 +143,8 @@ namespace SmartB.Core.ViewModels
                 catch (HttpRequestExceptionEx exception)
                 {
                     dialog.Hide();
-                  await  _dialogService.ShowDialog(exception.Message, "Http request error", "OK");
-                } 
+                    await _dialogService.ShowDialog(exception.Message, "Http request error", "OK");
+                }
                 catch (Exception exception)
                 {
                     dialog.Hide();
@@ -160,9 +161,10 @@ namespace SmartB.Core.ViewModels
                     "OK");
             }
         }
+
         private async void OnScan(object obj)
         {
-           await _navigationService.NavigateToAsync<ScannerViewModel>();
+            await _navigationService.NavigateToAsync<ScannerViewModel>();
         }
     }
 }

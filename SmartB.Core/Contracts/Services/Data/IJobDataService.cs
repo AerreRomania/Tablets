@@ -10,5 +10,6 @@ namespace SmartB.Core.Contracts.Services.Data
         Task<Job> UpdateJob(string id, Job jobToUpdate);
         Task<DateTime> GetLastClickForJob(string id);
         Task<DateTime> GetServerDateTime();
+        Task<int> GetProducedPieces(int orderId, int operationId);
     }
 }

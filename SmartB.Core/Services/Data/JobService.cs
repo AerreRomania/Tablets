@@ -54,5 +54,14 @@ namespace SmartB.Core.Services.Data
             };
             return await _genericRepository.PutAsync(builder.ToString(), jobToUpdate);
         }
+
+        public async Task<int> GetProducedPieces(int orderId, int operationId)
+        {
+            UriBuilder builder = new UriBuilder(ApiConstants.BaseApiUrl)
+            {
+                Path = $"{ApiConstants.UpdateJobEndpoint}/{orderId}/{operationId}"
+            };
+            return await _genericRepository.GetAsync<int>(builder.ToString());
+        }
     }
 }

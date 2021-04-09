@@ -65,5 +65,7 @@
         string BadPiecesSettings { get; set; }
         string GoodPiecesSettings { get; set; }
         string TotalPiecesSettings { get; set; }
+        string CommessaIdSettings { get; set; }
+        string PhaseIdSettings { get; set; }
     }
 }

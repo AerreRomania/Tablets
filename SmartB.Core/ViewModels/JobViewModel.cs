@@ -27,6 +27,8 @@ namespace SmartB.Core.ViewModels
         private IUsersDataService _usersService;
         private IDeviceDataService _deviceDataService;
         readonly ICommessaTimService _commessaService;
+        readonly IComenziService _comenziService;
+        
         public JobViewModel(IConnectionService connectionService, 
                             INavigationService navigationService, 
                             IDialogService dialogService, 
@@ -38,7 +40,8 @@ namespace SmartB.Core.ViewModels
                             IMasiniService masiniService,
                             IUsersDataService usersDataService, 
                             IDeviceDataService deviceDataService,
-                            ICommessaTimService commessaService) : 
+                            ICommessaTimService commessaService,
+                            IComenziService comenziService) : 
                             base(connectionService, navigationService, dialogService)
         {
             _jobEfficiency = jobEfficiency;
@@ -50,7 +53,9 @@ namespace SmartB.Core.ViewModels
             _usersService = usersDataService;
             _deviceDataService = deviceDataService;
             _commessaService = commessaService;
+            _comenziService = comenziService;
             _workPermitOverQuantity = false;
+            
         }
         public string Commessa => _settingsService.CommessaFromBarcode;
         public string EmployeeName => _settingsService.UserNameSetting;
@@ -309,16 +314,11 @@ namespace SmartB.Core.ViewModels
                 await ShiftControl(DateTime.Now.Hour);
                 if (_connectionService.IsConnected)
                 {
+                    int.TryParse(_settingsService.CommessaIdSettings, out int commessaId);
+                    int.TryParse(_settingsService.PhaseIdSettings, out int phaseId);
                     string barCode = _settingsService.CommessaFromBarcode;
                     var commessa = await _commessaService.GetCommessaTimAsync(barCode);
-
-                    int producedQuantity =
-                        Hours.H6 + Hours.H7 + Hours.H8 +
-                        Hours.H9 + Hours.H10 + Hours.H11 +
-                        Hours.H12 + Hours.H13 + Hours.H14 +
-                        Hours.H15 + Hours.H16 + Hours.H17 +
-                        Hours.H18 + Hours.H19 + Hours.H20 +
-                        Hours.H21 + Hours.H22 + Hours.H23;
+                    int producedQuantity = await _jobService.GetProducedPieces(commessaId, phaseId);
 
                     if (producedQuantity > commessa.Quantity && !_workPermitOverQuantity)
                     {
@@ -328,7 +328,7 @@ namespace SmartB.Core.ViewModels
                         else
                         {
                             string pin = result.Result.Text;
-                            if (string.IsNullOrEmpty(pin))
+                            if (!string.IsNullOrEmpty(pin))
                             {
                                 bool isManager = await _usersService.GetManagerAsync(pin);
 
@@ -338,11 +338,6 @@ namespace SmartB.Core.ViewModels
                             else
                                 return;
                         }
-                        //TODO: Make dialog with text box for pin managers need to insert to continue the process
-                        //var dialogResult = await _dialogService.ShowConfirmationDialog(
-                        //"Quantity overdraft",
-                        //"You have exceeded orders quantity. Would you like to continue?",
-                        //"Yes", "No");
                     }
 
                     var normHour = _settingsService.JobNormSettings.ToInteger();

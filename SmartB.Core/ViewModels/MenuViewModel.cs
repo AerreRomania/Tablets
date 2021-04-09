@@ -1,11 +1,12 @@
-﻿using System;
+﻿using SmartB.Core.Contracts.Services.Data;
 using SmartB.Core.Contracts.Services.General;
+using SmartB.Core.Enumerations;
 using SmartB.Core.Models;
 using SmartB.Core.ViewModels.Base;
+using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows.Input;
-using SmartB.Core.Contracts.Services.Data;
-using SmartB.Core.Enumerations;
 using Xamarin.Forms;
 namespace SmartB.Core.ViewModels
 {
@@ -17,9 +18,9 @@ namespace SmartB.Core.ViewModels
         private IDeviceDataService _deviceDataService;
         public MenuViewModel(IConnectionService connectionService,
             INavigationService navigationService,
-            IDialogService dialogService, 
+            IDialogService dialogService,
             ISettingsService settingsService,
-            IUsersDataService usersDataService, IDeviceDataService deviceDataService) 
+            IUsersDataService usersDataService, IDeviceDataService deviceDataService)
             : base(connectionService, navigationService, dialogService)
         {
             _settingsService = settingsService;
@@ -96,6 +97,7 @@ namespace SmartB.Core.ViewModels
                         _settingsService.RemoveSettings();
                         await _navigationService.ClearBackStack();
                         dialog.Hide();
+                        ClearApplicationCache();
                     }
                     catch (Exception e)
                     {
@@ -109,6 +111,20 @@ namespace SmartB.Core.ViewModels
                 {
                     await _dialogService.ShowDialog("Job in not finished, please stop current job and then log out.", "Information", "OK");
                 }
+            }
+        }
+        private void ClearApplicationCache()
+        {
+            var cache = Path.GetTempPath();
+
+            if (Directory.Exists(cache))
+            {
+                Directory.Delete(cache, true);
+            }
+
+            if (!Directory.Exists(cache))
+            {
+                Directory.CreateDirectory(cache);
             }
         }
         private void LoadMenuItems()
