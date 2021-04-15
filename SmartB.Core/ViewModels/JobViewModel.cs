@@ -179,8 +179,9 @@ namespace SmartB.Core.ViewModels
                 await _dialogService.ShowDialog($"{e.Message}", "", "OK");
             }
         }
-        private void EnableClickPieceButton()
+        private async Task EnableClickPieceButton(int milliseconds)
         {
+            await Task.Delay(milliseconds);
             IsButtonEnabled = true;
             IsBusyIndicator = false;
         }
@@ -360,8 +361,8 @@ namespace SmartB.Core.ViewModels
                     await WeightedAverage(idleClickTime, clickTime);
                     await EfficiencyByHour(clickTime);
                     _settingsService.LastClickSetting = clickTime.ToString();
-                    await WaitAndExecute(15000/*(int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3*/,
-                        EnableClickPieceButton);
+                    //await WaitAndExecute(15000/*(int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3*/,
+                      await  EnableClickPieceButton(15000);
                     _settingsService.CounterSettings = Counter.ToString();
                     _settingsService.TotalEfficiencySettings = EfficiencyTotal.ToString();
                     _settingsService.TotalPiecesSettings = TotalPieces.ToString();

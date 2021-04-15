@@ -1,13 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
-xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
-x:Class="SmartB.Core.Views.LoginView"
-xmlns:autocomplete="clr-namespace:Syncfusion.SfAutoComplete.XForms;assembly=Syncfusion.SfAutoComplete.XForms"
-xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
-xmlns:popupLayout="clr-namespace:Syncfusion.XForms.PopupLayout;assembly=Syncfusion.SfPopupLayout.XForms"
-utility:ViewModelLocator.AutoWireViewModel="True">
+<ContentPage
+    x:Class="SmartB.Core.Views.LoginView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:autocomplete="clr-namespace:Syncfusion.SfAutoComplete.XForms;assembly=Syncfusion.SfAutoComplete.XForms"
+    xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+    xmlns:inputLayout="clr-namespace:Syncfusion.XForms.TextInputLayout;assembly=Syncfusion.Core.XForms"
+    xmlns:popupLayout="clr-namespace:Syncfusion.XForms.PopupLayout;assembly=Syncfusion.SfPopupLayout.XForms"
+    xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
+    utility:ViewModelLocator.AutoWireViewModel="True">
     <ContentPage.Resources>
         <ResourceDictionary>
             <Style x:Key="IPLabelStyle" TargetType="Label">
@@ -23,68 +24,76 @@ utility:ViewModelLocator.AutoWireViewModel="True">
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="500"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="400"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
+    <Grid
+        Margin="20,0,20,0"
+        HorizontalOptions="CenterAndExpand"
+        VerticalOptions="CenterAndExpand">
+        <StackLayout HorizontalOptions="FillAndExpand">
+            <Frame
+                BackgroundColor="White"
+                CornerRadius="15"
+                HasShadow="true">
+                <StackLayout Margin="0,30">
+                    <buttons:SfButton
+                        BackgroundColor="Gray"
+                        BorderColor="Crimson"
+                        BorderWidth="1"
+                        Command="{Binding ScannerCommand}"
+                        CornerRadius="10"
+                        FontSize="20"
+                        HasShadow="True"
+                        HorizontalOptions="Center"
+                        Text="Scan QR Code"
+                        VerticalOptions="Center" />
 
-
-        <AbsoluteLayout HorizontalOptions="FillAndExpand" HeightRequest="500" WidthRequest="400" Grid.Row="1" Grid.Column="1">
-            <Frame AbsoluteLayout.LayoutFlags="SizeProportional" AbsoluteLayout.LayoutBounds="0.5,0.5,1,1" 
-                       BackgroundColor="White" HasShadow="true"
-                       CornerRadius="15" 
-                       >
-                <StackLayout Margin="0, 30">
-                    <buttons:SfButton VerticalOptions="Center"
-                                      HorizontalOptions="Center"
-                                      CornerRadius="10"
-                                      HasShadow="True"
-                                      BorderWidth="1"
-                                      BorderColor="Crimson"
-                                      BackgroundColor="Gray"
-                                      Text="Scan QR Code"
-                                      FontSize="20"
-                                      Command="{Binding ScannerCommand}" />
-
-                    <inputLayout:SfTextInputLayout Hint="Name"  ContainerType="Outlined" OutlineCornerRadius="8">
-                        <autocomplete:SfAutoComplete AutoCompleteMode="SuggestAppend" 
-                                                     SuggestionBoxPlacement="Top" 
-                                                     SuggestionMode="Contains"
-                                                     Watermark="User name" 
-                                                     MaximumDropDownHeight="100"
-                                                     WidthRequest="100"
-                                                     DataSource="{Binding NamesList}"  
-                                                     SelectedItem="{Binding UserName}"/>
+                    <inputLayout:SfTextInputLayout
+                        ContainerType="Outlined"
+                        Hint="Name"
+                        OutlineCornerRadius="8">
+                        <autocomplete:SfAutoComplete
+                            AutoCompleteMode="SuggestAppend"
+                            DataSource="{Binding NamesList}"
+                            MaximumDropDownHeight="100"
+                            SelectedItem="{Binding UserName}"
+                            SuggestionBoxPlacement="Top"
+                            SuggestionMode="Contains"
+                            Watermark="User name"
+                            WidthRequest="100" />
                     </inputLayout:SfTextInputLayout>
 
 
-                    <inputLayout:SfTextInputLayout Hint="Password" ContainerType="Outlined" OutlineCornerRadius="8" >
-                        <Entry IsPassword="True" Text="{Binding Password}" Keyboard="Numeric" />
+                    <inputLayout:SfTextInputLayout
+                        ContainerType="Outlined"
+                        Hint="Password"
+                        OutlineCornerRadius="8">
+                        <Entry
+                            IsPassword="True"
+                            Keyboard="Numeric"
+                            Text="{Binding Password}" />
                     </inputLayout:SfTextInputLayout>
 
-                    <buttons:SfButton VerticalOptions="Center"
-                                     HorizontalOptions="Center"
-                                     CornerRadius="10"
-                                     HasShadow="True"
-                                     BorderWidth="1"
-                                     BorderColor="Crimson"
-                                     BackgroundColor="Gray"
-                                     Text="Sign In"
-                                     FontSize="20"
-                                     Command="{Binding LoginCommand}" />
+                    <buttons:SfButton
+                        BackgroundColor="Gray"
+                        BorderColor="Crimson"
+                        BorderWidth="1"
+                        Command="{Binding LoginCommand}"
+                        CornerRadius="10"
+                        FontSize="20"
+                        HasShadow="True"
+                        HorizontalOptions="Center"
+                        Text="Sign In"
+                        VerticalOptions="Center" />
 
                 </StackLayout>
             </Frame>
-            <Frame  AbsoluteLayout.LayoutFlags="PositionProportional" Padding="0,0,0,0" BackgroundColor="Transparent" BorderColor="Transparent"
-                    AbsoluteLayout.LayoutBounds="0.5,0,50,50" VerticalOptions="Fill" HorizontalOptions="Fill">
-            </Frame>
-        </AbsoluteLayout>
+            <Frame
+                Padding="0,0,0,0"
+                AbsoluteLayout.LayoutBounds="0.5,0,50,50"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                BackgroundColor="Transparent"
+                BorderColor="Transparent"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill" />
+        </StackLayout>
     </Grid>
 </ContentPage>

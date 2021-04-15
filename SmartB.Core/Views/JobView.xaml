@@ -1,14 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:popuplayout="clr-namespace:Syncfusion.XForms.PopupLayout;assembly=Syncfusion.SfPopupLayout.XForms"
-             xmlns:gauge="clr-namespace:Syncfusion.SfGauge.XForms;assembly=Syncfusion.SfGauge.XForms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
-             xmlns:controls="clr-namespace:SmartB.Core.Controls;assembly=SmartB.Core"
-             xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
-             x:Class="SmartB.Core.Views.JobView"
-             NavigationPage.HasBackButton="False"
-             utility:ViewModelLocator.AutoWireViewModel="True" >
+<ContentPage
+    x:Class="SmartB.Core.Views.JobView"
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+    xmlns:controls="clr-namespace:SmartB.Core.Controls;assembly=SmartB.Core"
+    xmlns:gauge="clr-namespace:Syncfusion.SfGauge.XForms;assembly=Syncfusion.SfGauge.XForms"
+    xmlns:popuplayout="clr-namespace:Syncfusion.XForms.PopupLayout;assembly=Syncfusion.SfPopupLayout.XForms"
+    xmlns:utility="clr-namespace:SmartB.Core.Utility;assembly=SmartB.Core"
+    utility:ViewModelLocator.AutoWireViewModel="True"
+    NavigationPage.HasBackButton="False">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -35,221 +36,324 @@
         <StackLayout>
 
 
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
-            <Frame CornerRadius="10" WidthRequest="150"
-              
-                   BackgroundColor="White"
-                   BorderColor="Red"
-                   Padding="0">
+            <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
+                <Frame
+                    Padding="0"
+                    BackgroundColor="White"
+                    BorderColor="Red"
+                    CornerRadius="10"
+                    WidthRequest="150">
 
-                <StackLayout>
-                    <Label TextColor="WhiteSmoke" Text="Capi/H" BackgroundColor="Crimson" FontFamily="SegoeUI" FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
-                    <Label TextColor="Crimson" Text="{Binding Norm}" FontFamily="SegoeUI" FontAttributes ="Bold" FontSize="30" VerticalTextAlignment="End" HorizontalTextAlignment="Center" />
-                </StackLayout>
-            </Frame>
+                    <StackLayout>
+                        <Label
+                            BackgroundColor="Crimson"
+                            FontFamily="SegoeUI"
+                            FontSize="Medium"
+                            HorizontalTextAlignment="Center"
+                            Text="Capi/H"
+                            TextColor="WhiteSmoke"
+                            VerticalTextAlignment="Center" />
+                        <Label
+                            FontAttributes="Bold"
+                            FontFamily="SegoeUI"
+                            FontSize="30"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding Norm}"
+                            TextColor="Crimson"
+                            VerticalTextAlignment="End" />
+                    </StackLayout>
+                </Frame>
 
-                <Frame CornerRadius="10" WidthRequest="150"
-                       BackgroundColor="White"
-                   BorderColor="Red"
-                   Padding="0">
+                <Frame
+                    Padding="0"
+                    BackgroundColor="White"
+                    BorderColor="Red"
+                    CornerRadius="10"
+                    WidthRequest="150">
 
-                <StackLayout>
-                    <Label TextColor="WhiteSmoke" Text="Capi Total" BackgroundColor="Crimson" FontFamily="SegoeUI" FontSize="Medium" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
-                    <Label TextColor="Crimson" Text="{Binding TotalPieces}" FontFamily="SegoeUI" FontAttributes="Bold" FontSize="30" VerticalTextAlignment="End" HorizontalTextAlignment="Center" />
-                </StackLayout>
-            </Frame>
+                    <StackLayout>
+                        <Label
+                            BackgroundColor="Crimson"
+                            FontFamily="SegoeUI"
+                            FontSize="Medium"
+                            HorizontalTextAlignment="Center"
+                            Text="Capi Total"
+                            TextColor="WhiteSmoke"
+                            VerticalTextAlignment="Center" />
+                        <Label
+                            FontAttributes="Bold"
+                            FontFamily="SegoeUI"
+                            FontSize="30"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding TotalPieces}"
+                            TextColor="Crimson"
+                            VerticalTextAlignment="End" />
+                    </StackLayout>
+                </Frame>
 
-                <Frame CornerRadius="10" WidthRequest="150"
-                       BackgroundColor="White"
-                   BorderColor="Red"
-                   Padding="0">
-                <StackLayout>
-                    <Label TextColor="WhiteSmoke" Text="Efficienza" BackgroundColor="Crimson" FontSize="Medium" FontFamily="SegoeUI" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" />
-                    <Label TextColor="Crimson" Text="{Binding EfficiencyCurrent, Mode=TwoWay, StringFormat='{0:0}%'}" FontFamily="SegoeUI" FontAttributes="Bold" FontSize="30" VerticalTextAlignment="End" HorizontalTextAlignment="Center" />
-                </StackLayout>
-            </Frame>
+                <Frame
+                    Padding="0"
+                    BackgroundColor="White"
+                    BorderColor="Red"
+                    CornerRadius="10"
+                    WidthRequest="150">
+                    <StackLayout>
+                        <Label
+                            BackgroundColor="Crimson"
+                            FontFamily="SegoeUI"
+                            FontSize="Medium"
+                            HorizontalTextAlignment="Center"
+                            Text="Efficienza"
+                            TextColor="WhiteSmoke"
+                            VerticalTextAlignment="Center" />
+                        <Label
+                            FontAttributes="Bold"
+                            FontFamily="SegoeUI"
+                            FontSize="30"
+                            HorizontalTextAlignment="Center"
+                            Text="{Binding EfficiencyCurrent, Mode=TwoWay, StringFormat='{0:0}%'}"
+                            TextColor="Crimson"
+                            VerticalTextAlignment="End" />
+                    </StackLayout>
+                </Frame>
             </StackLayout>
 
-        <StackLayout HorizontalOptions="CenterAndExpand">
+            <!--<StackLayout HorizontalOptions="CenterAndExpand">
 
-            <controls:FirstShiftHours  IsVisible="{Binding FirstShift}" HorizontalOptions="CenterAndExpand"
-                                      H6="{Binding Hours.H6, Mode=TwoWay}"
-                                      H7="{Binding Hours.H7, Mode=TwoWay}"
-                                      H8="{Binding Hours.H8, Mode=TwoWay}"
-                                      H9="{Binding Hours.H9, Mode=TwoWay}"
-                                      H10="{Binding Hours.H10, Mode=TwoWay}"
-                                      H11="{Binding Hours.H11, Mode=TwoWay}"
-                                      H12="{Binding Hours.H12, Mode=TwoWay}"
-                                      H13="{Binding Hours.H13, Mode=TwoWay}"
-                                      H14="{Binding Hours.H14, Mode=TwoWay}"
-                                      H15="{Binding Hours.H15, Mode=TwoWay}" 
-                                      H6Efficiency="{Binding EfficiencyForHours.H6Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H7Efficiency="{Binding EfficiencyForHours.H7Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H8Efficiency="{Binding EfficiencyForHours.H8Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H9Efficiency="{Binding EfficiencyForHours.H9Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H10Efficiency="{Binding EfficiencyForHours.H10Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H11Efficiency="{Binding EfficiencyForHours.H11Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H12Efficiency="{Binding EfficiencyForHours.H12Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H13Efficiency="{Binding EfficiencyForHours.H13Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H14Efficiency="{Binding EfficiencyForHours.H14Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H15Efficiency="{Binding EfficiencyForHours.H15Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"/>
+                <controls:FirstShiftHours
+                    H10="{Binding Hours.H10, Mode=TwoWay}"
+                    H10Efficiency="{Binding EfficiencyForHours.H10Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H11="{Binding Hours.H11, Mode=TwoWay}"
+                    H11Efficiency="{Binding EfficiencyForHours.H11Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H12="{Binding Hours.H12, Mode=TwoWay}"
+                    H12Efficiency="{Binding EfficiencyForHours.H12Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H13="{Binding Hours.H13, Mode=TwoWay}"
+                    H13Efficiency="{Binding EfficiencyForHours.H13Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H14="{Binding Hours.H14, Mode=TwoWay}"
+                    H14Efficiency="{Binding EfficiencyForHours.H14Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H15="{Binding Hours.H15, Mode=TwoWay}"
+                    H15Efficiency="{Binding EfficiencyForHours.H15Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H6="{Binding Hours.H6, Mode=TwoWay}"
+                    H6Efficiency="{Binding EfficiencyForHours.H6Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H7="{Binding Hours.H7, Mode=TwoWay}"
+                    H7Efficiency="{Binding EfficiencyForHours.H7Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H8="{Binding Hours.H8, Mode=TwoWay}"
+                    H8Efficiency="{Binding EfficiencyForHours.H8Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H9="{Binding Hours.H9, Mode=TwoWay}"
+                    H9Efficiency="{Binding EfficiencyForHours.H9Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    HorizontalOptions="CenterAndExpand"
+                    IsVisible="{Binding FirstShift}" />
 
-                <controls:SecondShiftHours  IsVisible="{Binding SecondShift}" HorizontalOptions="CenterAndExpand"
-                                      H15="{Binding Hours.H15, Mode=TwoWay}"
-                                      H16="{Binding Hours.H16, Mode=TwoWay}"
-                                      H17="{Binding Hours.H17, Mode=TwoWay}"
-                                      H18="{Binding Hours.H18, Mode=TwoWay}"
-                                      H19="{Binding Hours.H19, Mode=TwoWay}"
-                                      H20="{Binding Hours.H20, Mode=TwoWay}"
-                                      H21="{Binding Hours.H21, Mode=TwoWay}"
-                                      H22="{Binding Hours.H22, Mode=TwoWay}"
-                                      H23="{Binding Hours.H23, Mode=TwoWay}" 
-                                      H15Efficiency="{Binding EfficiencyForHours.H15Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H16Efficiency="{Binding EfficiencyForHours.H16Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H17Efficiency="{Binding EfficiencyForHours.H17Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H18Efficiency="{Binding EfficiencyForHours.H18Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H19Efficiency="{Binding EfficiencyForHours.H19Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H20Efficiency="{Binding EfficiencyForHours.H20Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H21Efficiency="{Binding EfficiencyForHours.H21Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H22Efficiency="{Binding EfficiencyForHours.H22Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
-                                      H23Efficiency="{Binding EfficiencyForHours.H23Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"/>
+                <controls:SecondShiftHours
+                    H15="{Binding Hours.H15, Mode=TwoWay}"
+                    H15Efficiency="{Binding EfficiencyForHours.H15Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H16="{Binding Hours.H16, Mode=TwoWay}"
+                    H16Efficiency="{Binding EfficiencyForHours.H16Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H17="{Binding Hours.H17, Mode=TwoWay}"
+                    H17Efficiency="{Binding EfficiencyForHours.H17Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H18="{Binding Hours.H18, Mode=TwoWay}"
+                    H18Efficiency="{Binding EfficiencyForHours.H18Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H19="{Binding Hours.H19, Mode=TwoWay}"
+                    H19Efficiency="{Binding EfficiencyForHours.H19Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H20="{Binding Hours.H20, Mode=TwoWay}"
+                    H20Efficiency="{Binding EfficiencyForHours.H20Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H21="{Binding Hours.H21, Mode=TwoWay}"
+                    H21Efficiency="{Binding EfficiencyForHours.H21Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H22="{Binding Hours.H22, Mode=TwoWay}"
+                    H22Efficiency="{Binding EfficiencyForHours.H22Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    H23="{Binding Hours.H23, Mode=TwoWay}"
+                    H23Efficiency="{Binding EfficiencyForHours.H23Efficiency, Mode=TwoWay, StringFormat='{0:0}'}"
+                    HorizontalOptions="CenterAndExpand"
+                    IsVisible="{Binding SecondShift}" />
 
-            <gauge:SfLinearGauge HeightRequest="40">
-                <gauge:SfLinearGauge.Annotations>
-                    <gauge:LinearGaugeAnnotation ScaleValue ="100" VerticalViewAlignment="End" HorizontalViewAlignment="End">
-                        <gauge:LinearGaugeAnnotation.View>
-                            <Label Text="{Binding EfficiencyTotal, StringFormat='{0:0.0}%'}" FontAttributes = "Bold" HorizontalTextAlignment="Center" TextColor="DimGray" FontSize ="21" />
-                        </gauge:LinearGaugeAnnotation.View>
-                    </gauge:LinearGaugeAnnotation>
-                </gauge:SfLinearGauge.Annotations>
+                <gauge:SfLinearGauge HeightRequest="40">
+                    <gauge:SfLinearGauge.Annotations>
+                        <gauge:LinearGaugeAnnotation
+                            HorizontalViewAlignment="End"
+                            ScaleValue="100"
+                            VerticalViewAlignment="End">
+                            <gauge:LinearGaugeAnnotation.View>
+                                <Label
+                                    FontAttributes="Bold"
+                                    FontSize="21"
+                                    HorizontalTextAlignment="Center"
+                                    Text="{Binding EfficiencyTotal, StringFormat='{0:0.0}%'}"
+                                    TextColor="DimGray" />
+                            </gauge:LinearGaugeAnnotation.View>
+                        </gauge:LinearGaugeAnnotation>
+                    </gauge:SfLinearGauge.Annotations>
 
-                <gauge:SfLinearGauge.Scales>
-                    <gauge:LinearScale ScaleBarColor="LightGray"  LabelColor="Black" ScaleBarSize="30" CornerRadius="10" CornerRadiusType="Both"
-                                       LabelFontSize="14" MinimumValue="0" MaximumValue="100" Interval="25" LabelOffset="-10" ShowTicks="False" ShowLabels="False">
-                        <gauge:LinearScale.Pointers>
-                            <gauge:BarPointer Value="{Binding EfficiencyTotal}" CornerRadiusType="Both"  CornerRadius="15" Thickness="30" EnableAnimation="True">
-                                <gauge:BarPointer.GradientStops>
-                                    <gauge:GaugeGradientStop Value="10" Color="DarkRed" />
-                                    <gauge:GaugeGradientStop Value="40" Color="Red" />
-                                    <gauge:GaugeGradientStop Value="50" Color="OrangeRed" />
-                                    <gauge:GaugeGradientStop Value="70" Color="Yellow" />
-                                    <gauge:GaugeGradientStop Value="89" Color="GreenYellow" />
-                                    <gauge:GaugeGradientStop Value="100" Color="ForestGreen" />
-                                </gauge:BarPointer.GradientStops>
-                            </gauge:BarPointer>
-                        </gauge:LinearScale.Pointers>
-                    </gauge:LinearScale>
-                </gauge:SfLinearGauge.Scales>
-            </gauge:SfLinearGauge>
-        </StackLayout>
+                    <gauge:SfLinearGauge.Scales>
+                        <gauge:LinearScale
+                            CornerRadius="10"
+                            CornerRadiusType="Both"
+                            Interval="25"
+                            LabelColor="Black"
+                            LabelFontSize="14"
+                            LabelOffset="-10"
+                            MaximumValue="100"
+                            MinimumValue="0"
+                            ScaleBarColor="LightGray"
+                            ScaleBarSize="30"
+                            ShowLabels="False"
+                            ShowTicks="False">
+                            <gauge:LinearScale.Pointers>
+                                <gauge:BarPointer
+                                    CornerRadius="15"
+                                    CornerRadiusType="Both"
+                                    EnableAnimation="True"
+                                    Thickness="30"
+                                    Value="{Binding EfficiencyTotal}">
+                                    <gauge:BarPointer.GradientStops>
+                                        <gauge:GaugeGradientStop Color="DarkRed" Value="10" />
+                                        <gauge:GaugeGradientStop Color="Red" Value="40" />
+                                        <gauge:GaugeGradientStop Color="OrangeRed" Value="50" />
+                                        <gauge:GaugeGradientStop Color="Yellow" Value="70" />
+                                        <gauge:GaugeGradientStop Color="GreenYellow" Value="89" />
+                                        <gauge:GaugeGradientStop Color="ForestGreen" Value="100" />
+                                    </gauge:BarPointer.GradientStops>
+                                </gauge:BarPointer>
+                            </gauge:LinearScale.Pointers>
+                        </gauge:LinearScale>
+                    </gauge:SfLinearGauge.Scales>
+                </gauge:SfLinearGauge>
+            </StackLayout>-->
 
-            <buttons:SfButton x:Name="ButtonPiece" Margin="10"  Clicked="ButtonPiece_Clicked"
-                              HeightRequest="450"
-                                  IsEnabled="{Binding IsButtonEnabled, Mode=TwoWay}"
-                                  CornerRadius="25"
-                                  HasShadow="True"
-                                  BorderWidth="5"
-                                  BorderColor="Gray"
-                                  FontSize="150"
-                                  TextColor="White"
-                                  BackgroundColor="{Binding BackgroundColorButton}"
-                                  Text="{Binding Counter, Mode=TwoWay}"
-                                  Command="{Binding SavePiece}">
-      
-            </buttons:SfButton>
+            <buttons:SfButton
+                x:Name="ButtonPiece"
+                Margin="10"
+                BackgroundColor="{Binding BackgroundColorButton}"
+                BorderColor="Gray"
+                BorderWidth="5"
+                Clicked="ButtonPiece_Clicked"
+                Command="{Binding SavePiece}"
+                CornerRadius="25"
+                FontSize="150"
+                HasShadow="True"
+                IsEnabled="{Binding IsButtonEnabled, Mode=TwoWay}"
+                Text="{Binding Counter, Mode=TwoWay}"
+                TextColor="White"
+                VerticalOptions="FillAndExpand" />
 
-            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Spacing="50">
-                <buttons:SfButton CornerRadius="25"  
-                              HasShadow="True"
-                              BorderWidth="2"
-                              BorderColor="Crimson"
-                              FontSize="18"
-                              TextColor="White"
-                              BackgroundColor="Gray"
-                              WidthRequest="150"
-                              Text="STOP"
-                              Command="{Binding StopJobCommand}" />
-     
-            <popuplayout:SfPopupLayout  WidthRequest="150" IsOpen="{Binding CanShowPausePopup}">
+            <StackLayout
+                HorizontalOptions="CenterAndExpand"
+                Orientation="Horizontal"
+                Spacing="50">
+                <buttons:SfButton
+                    BackgroundColor="Gray"
+                    BorderColor="Crimson"
+                    BorderWidth="2"
+                    Command="{Binding StopJobCommand}"
+                    CornerRadius="25"
+                    FontSize="18"
+                    HasShadow="True"
+                    Text="STOP"
+                    TextColor="White"
+                    WidthRequest="150" />
+
+                <popuplayout:SfPopupLayout IsOpen="{Binding CanShowPausePopup}" WidthRequest="150">
+                    <popuplayout:SfPopupLayout.PopupView>
+                        <popuplayout:PopupView
+                            AcceptCommand="{Binding PauseJobAcceptCommand}"
+                            AnimationMode="SlideOnRight"
+                            HeightRequest="350"
+                            ShowHeader="False"
+                            WidthRequest="350">
+                            <popuplayout:PopupView.ContentTemplate>
+                                <DataTemplate>
+                                    <StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Style="{StaticResource PauseLabelStyle}" Text="  Pausa 1" />
+                                            <Switch IsToggled="{Binding Pause1Switch, Mode=TwoWay}" Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Style="{StaticResource PauseLabelStyle}" Text="  Pausa 2" />
+                                            <Switch IsToggled="{Binding Pause2Switch, Mode=TwoWay}" Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Style="{StaticResource PauseLabelStyle}" Text="  WC" />
+                                            <Switch IsToggled="{Binding WcSwitch, Mode=TwoWay}" Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Style="{StaticResource PauseLabelStyle}" Text="  Problemi Tecnici" />
+                                            <Switch IsToggled="{Binding TechnicalProblemsSwitch, Mode=TwoWay}" Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Style="{StaticResource PauseLabelStyle}" Text="  Varie" />
+                                            <Switch IsToggled="{Binding OtherSwitch, Mode=TwoWay}" Style="{StaticResource SwitchButtonStyle}" />
+                                        </StackLayout>
+                                    </StackLayout>
+                                </DataTemplate>
+                            </popuplayout:PopupView.ContentTemplate>
+                        </popuplayout:PopupView>
+                    </popuplayout:SfPopupLayout.PopupView>
+                    <popuplayout:SfPopupLayout.Content>
+                        <buttons:SfButton
+                            BackgroundColor="Gray"
+                            BorderColor="Crimson"
+                            BorderWidth="2"
+                            Command="{Binding PauseJobCommand}"
+                            CornerRadius="25"
+                            FontSize="18"
+                            HasShadow="True"
+                            Text="PAUSE"
+                            TextColor="White" />
+                    </popuplayout:SfPopupLayout.Content>
+                </popuplayout:SfPopupLayout>
+            </StackLayout>
+
+
+            <controls:JobInformation
+                Margin="0,0,0,0"
+                Commessa="{Binding Commessa}"
+                Employee="{Binding EmployeeName}"
+                Machine="{Binding MachineCode}"
+                Phase="{Binding Phase}"
+                Sector="{Binding Sector}" />
+
+
+
+            <popuplayout:SfPopupLayout IsOpen="{Binding CanShowStopwatchPopup}" StaysOpen="True">
                 <popuplayout:SfPopupLayout.PopupView>
-                    <popuplayout:PopupView AnimationMode="SlideOnRight" HeightRequest ="350" WidthRequest="350" ShowHeader="False" AcceptCommand="{Binding PauseJobAcceptCommand}">
+                    <popuplayout:PopupView
+                        AnimationMode="Zoom"
+                        IsFullScreen="True"
+                        ShowFooter="False"
+                        ShowHeader="False">
                         <popuplayout:PopupView.ContentTemplate>
                             <DataTemplate>
                                 <StackLayout>
-                                    <StackLayout Orientation="Horizontal">
-                                        <Label Text ="  Pausa 1"  Style="{StaticResource PauseLabelStyle}" />
-                                        <Switch IsToggled="{Binding Pause1Switch, Mode=TwoWay}" Style="{StaticResource SwitchButtonStyle}" />
-                                        </StackLayout>
-                                        <StackLayout Orientation="Horizontal">
-                                        <Label Text ="  Pausa 2"  Style="{StaticResource PauseLabelStyle}" />
-                                        <Switch IsToggled="{Binding Pause2Switch, Mode=TwoWay}"   Style="{StaticResource SwitchButtonStyle}" />
-                                        </StackLayout>
-                                        <StackLayout Orientation="Horizontal">
-                                        <Label Text ="  WC"  Style="{StaticResource PauseLabelStyle}" />
-                                        <Switch IsToggled="{Binding WcSwitch, Mode=TwoWay}"   Style="{StaticResource SwitchButtonStyle}" />
-                                        </StackLayout>
-                                        <StackLayout Orientation="Horizontal">
-                                        <Label Text ="  Problemi Tecnici"  Style="{StaticResource PauseLabelStyle}" />
-                                        <Switch IsToggled="{Binding TechnicalProblemsSwitch, Mode=TwoWay}"  Style="{StaticResource SwitchButtonStyle}" />
-                                        </StackLayout>
-                                        <StackLayout Orientation="Horizontal">
-                                        <Label Text ="  Varie"   Style="{StaticResource PauseLabelStyle}" />
-                                        <Switch IsToggled="{Binding OtherSwitch, Mode=TwoWay}"  Style="{StaticResource SwitchButtonStyle}" />
-                                        </StackLayout>
-                            </StackLayout>
-                            </DataTemplate>
-                        </popuplayout:PopupView.ContentTemplate>
-                    </popuplayout:PopupView>
-                </popuplayout:SfPopupLayout.PopupView>
-                <popuplayout:SfPopupLayout.Content>
-                    <buttons:SfButton CornerRadius="25"
-                                          HasShadow="True"
-                                          BorderWidth="2"
-                                          BorderColor="Crimson"
-                                          FontSize="18"
-                                          TextColor="White"
-                                          BackgroundColor="Gray"
-                                          Text="PAUSE"
-                                          Command="{Binding PauseJobCommand}" />
-                </popuplayout:SfPopupLayout.Content>
-            </popuplayout:SfPopupLayout>
-            </StackLayout>
 
-
-            <controls:JobInformation  Margin="0,0,0,0" 
-                                     Commessa="{Binding Commessa}" 
-                                     Employee="{Binding EmployeeName}" 
-                                     Phase="{Binding Phase}"
-                                     Sector="{Binding Sector}"
-                                     Machine="{Binding MachineCode}"/>
-       
-
-
-                <popuplayout:SfPopupLayout IsOpen="{Binding CanShowStopwatchPopup}" StaysOpen="True">
-                <popuplayout:SfPopupLayout.PopupView >
-                    <popuplayout:PopupView ShowFooter="False" ShowHeader="False" IsFullScreen="True" AnimationMode="Zoom">
-                        <popuplayout:PopupView.ContentTemplate>
-                            <DataTemplate>
-                                <StackLayout>
-                              
-                                    <Label  Text="{Binding PauseType}"  FontSize="45" HorizontalTextAlignment="Center" Margin="25" TextColor="Black" />
-                                    <Label  Text ="{Binding StopwatchTime, Mode=TwoWay}"  FontSize="40" HorizontalTextAlignment="Center" Margin="25" />
-                                    <buttons:SfButton CornerRadius="25"   WidthRequest="20"  Margin="35" 
-                                                      HasShadow="True"
-                                                      BorderWidth="2"
-                                                      BorderColor="Crimson"
-                                                      FontSize="18"
-                                                      TextColor="White"
-                                                      BackgroundColor="Gray"
-                                                      Text="STOP"
-                                                      Command="{Binding StopStopwatchCommand}" />
+                                    <Label
+                                        Margin="25"
+                                        FontSize="45"
+                                        HorizontalTextAlignment="Center"
+                                        Text="{Binding PauseType}"
+                                        TextColor="Black" />
+                                    <Label
+                                        Margin="25"
+                                        FontSize="40"
+                                        HorizontalTextAlignment="Center"
+                                        Text="{Binding StopwatchTime, Mode=TwoWay}" />
+                                    <buttons:SfButton
+                                        Margin="35"
+                                        BackgroundColor="Gray"
+                                        BorderColor="Crimson"
+                                        BorderWidth="2"
+                                        Command="{Binding StopStopwatchCommand}"
+                                        CornerRadius="25"
+                                        FontSize="18"
+                                        HasShadow="True"
+                                        Text="STOP"
+                                        TextColor="White"
+                                        WidthRequest="20" />
                                 </StackLayout>
                             </DataTemplate>
                         </popuplayout:PopupView.ContentTemplate>
                     </popuplayout:PopupView>
                 </popuplayout:SfPopupLayout.PopupView>
 
-    
+
             </popuplayout:SfPopupLayout>
         </StackLayout>
     </ContentPage.Content>

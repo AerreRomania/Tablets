@@ -238,6 +238,7 @@ namespace SmartB.Core.ViewModels
                 await _dialogService.ShowDialog(
                     $"User already logged in with name {_settingsService.UserNameSetting}, please logout to change user account",
                     "User logged", "OK");
+                
             }
         }
         private async void MachineWithBarCode(string id)

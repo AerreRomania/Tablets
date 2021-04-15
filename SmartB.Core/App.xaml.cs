@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using SmartB.Core.Bootstrap;
 using SmartB.Core.Contracts.Services.General;
 using Xamarin.Forms;
@@ -19,6 +20,7 @@ namespace SmartB.Core
         private void InitalizeApp()
         {
             AppContainer.RegisterDependencies();
+
         }
 
         //private async Task InitializeNavigation()
@@ -26,12 +28,13 @@ namespace SmartB.Core
         //    var navigationService = AppContainer.Resolve<INavigationService>();
         //    await navigationService.InitializeAsync();
         //}
-
+       
         protected override void OnStart()
         {
+           
             // Handle when your app starts
         }
-
+       
         protected override void OnSleep()
         {
             // Handle when your app sleeps
