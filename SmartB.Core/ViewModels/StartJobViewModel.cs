@@ -48,17 +48,24 @@ namespace SmartB.Core.ViewModels
                 var dialog = _dialogService.ShowProgressDialog("Please wait...");
                 dialog.Show();
                 var currentTime = await _jobDataService.GetServerDateTime();
+                var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
                 var jobId = _settingsService.JobIdSettings;
                 var job = await _jobDataService.GetJob(jobId);
                 job.FirstWrite = currentTime;
+                Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
+                {
+                    Id = machine.Id,
+                    Occupied = false,
+                    Active=true
+                };
+                await _masiniService.UpdateMachineActivity(machineToUpdate,machineToUpdate.Id);
                 await _jobDataService.UpdateJob(jobId, job);
                 dialog.Hide();
                 await _navigationService.NavigateToAsync<JobViewModel>();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
-                throw;
+                await _dialogService.ShowDialog(e.Message, "Exception:"+e.InnerException, "OK");
             }
         }
         private async Task CloseJob()
@@ -81,7 +88,7 @@ namespace SmartB.Core.ViewModels
                     Occupied = false
                 };
 
-                await _masiniService.UpdateMachineActivity(machineToUpdate);
+                await _masiniService.UpdateMachineActivity(machineToUpdate, machineToUpdate.Id);
 
                 //if (machine.Active)
                 //{

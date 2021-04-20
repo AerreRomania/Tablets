@@ -289,7 +289,12 @@ namespace SmartB.Core.ViewModels
                 };
                 machine.Active = true;
                 machine.LastTimeUsed = jobCreationTime;
-                //await _masiniService.UpdateMachineActivity(machine.Id, machine); //last update
+                //Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
+                //{
+                //    Id = machine.Id,
+                //    Occupied = true
+                //};
+                //await _masiniService.UpdateMachineActivity(machineToUpdate); //last update
                 var addedJob = await _jobDataService.AddJob(job);
                 _settingsService.JobIdSettings = addedJob.Id.ToString();
                 _settingsService.JobsIdSettings += addedJob.Id + ",";

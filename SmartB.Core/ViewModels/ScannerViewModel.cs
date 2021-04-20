@@ -279,7 +279,7 @@ namespace SmartB.Core.ViewModels
                                 };
 
 
-                                await _machineService.UpdateMachineActivity(machineToUpdate);
+                                await _machineService.UpdateMachineActivity(machineToUpdate, machineId);
 
                                 await _navigationService.NavigateToAsync<MainViewModel>();
                             }

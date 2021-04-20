@@ -8,6 +8,6 @@ namespace SmartB.Core.Contracts.Services.Data
         Task<IEnumerable<Masini>> GetMachinesAsync(int sectorId, string line);
         Task<bool> GetMachineStateAsync(string id);
         Task<Masini> GetMachineAsync(string id);
-        Task UpdateMachineActivity(MasiniForUpdate machineToUpdate);
+        Task UpdateMachineActivity(MasiniForUpdate machineToUpdate, int id);
     }
 }
