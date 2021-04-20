@@ -91,7 +91,7 @@
                     </StackLayout>
                 </Frame>
 
-                <Frame
+                <!--<Frame
                     Padding="0"
                     BackgroundColor="White"
                     BorderColor="Red"
@@ -115,7 +115,7 @@
                             TextColor="Crimson"
                             VerticalTextAlignment="End" />
                     </StackLayout>
-                </Frame>
+                </Frame>-->
             </StackLayout>
 
             <!--<StackLayout HorizontalOptions="CenterAndExpand">
@@ -222,7 +222,7 @@
             <buttons:SfButton
                 x:Name="ButtonPiece"
                 Margin="10"
-                BackgroundColor="{Binding BackgroundColorButton}"
+                BackgroundColor="{Binding BackgroundColorButton, Mode=TwoWay}"
                 BorderColor="Gray"
                 BorderWidth="5"
                 Clicked="ButtonPiece_Clicked"

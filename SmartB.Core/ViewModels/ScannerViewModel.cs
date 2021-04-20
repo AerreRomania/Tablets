@@ -110,6 +110,7 @@ namespace SmartB.Core.ViewModels
                     catch (Exception e)
                     {
                         await _dialogService.ShowDialog(e.ToString(), "Exception", "OK");
+                        await _navigationService.NavigateBackAsync();
                     }
                 }
                 else

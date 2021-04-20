@@ -179,9 +179,9 @@ namespace SmartB.Core.ViewModels
                 await _dialogService.ShowDialog($"{e.Message}", "", "OK");
             }
         }
-        private async Task EnableClickPieceButton(int milliseconds)
+        private void EnableClickPieceButton()
         {
-            await Task.Delay(milliseconds);
+            
             IsButtonEnabled = true;
             IsBusyIndicator = false;
         }
@@ -190,48 +190,48 @@ namespace SmartB.Core.ViewModels
             await Task.Delay(100);
             try
             {
-                Hours = new Hours
-                {
-                    H6 = _settingsService.H6Settings.ToInteger(),
-                    H7 = _settingsService.H7Settings.ToInteger(),
-                    H8 = _settingsService.H8Settings.ToInteger(),
-                    H9 = _settingsService.H9Settings.ToInteger(),
-                    H10 = _settingsService.H10Settings.ToInteger(),
-                    H11 = _settingsService.H11Settings.ToInteger(),
-                    H12 = _settingsService.H12Settings.ToInteger(),
-                    H13 = _settingsService.H13Settings.ToInteger(),
-                    H14 = _settingsService.H14Settings.ToInteger(),
-                    H15 = _settingsService.H15Settings.ToInteger(),
-                    H16 = _settingsService.H16Settings.ToInteger(),
-                    H17 = _settingsService.H17Settings.ToInteger(),
-                    H18 = _settingsService.H18Settings.ToInteger(),
-                    H19 = _settingsService.H19Settings.ToInteger(),
-                    H20 = _settingsService.H20Settings.ToInteger(),
-                    H21 = _settingsService.H21Settings.ToInteger(),
-                    H22 = _settingsService.H22Settings.ToInteger(),
-                    H23 = _settingsService.H23Settings.ToInteger()
-                };
-                EfficiencyForHours = new EfficiencyForHours
-                {
-                    H6Efficiency = _settingsService.H6EfficiencySettings.ToDouble(),
-                    H7Efficiency = _settingsService.H7EfficiencySettings.ToDouble(),
-                    H8Efficiency = _settingsService.H8EfficiencySettings.ToDouble(),
-                    H9Efficiency = _settingsService.H9EfficiencySettings.ToDouble(),
-                    H10Efficiency = _settingsService.H10EfficiencySettings.ToDouble(),
-                    H11Efficiency = _settingsService.H11EfficiencySettings.ToDouble(),
-                    H12Efficiency = _settingsService.H12EfficiencySettings.ToDouble(),
-                    H13Efficiency = _settingsService.H13EfficiencySettings.ToDouble(),
-                    H14Efficiency = _settingsService.H14EfficiencySettings.ToDouble(),
-                    H15Efficiency = _settingsService.H15EfficiencySettings.ToDouble(),
-                    H16Efficiency = _settingsService.H16EfficiencySettings.ToDouble(),
-                    H17Efficiency = _settingsService.H17EfficiencySettings.ToDouble(),
-                    H18Efficiency = _settingsService.H18EfficiencySettings.ToDouble(),
-                    H19Efficiency = _settingsService.H19EfficiencySettings.ToDouble(),
-                    H20Efficiency = _settingsService.H20EfficiencySettings.ToDouble(),
-                    H21Efficiency = _settingsService.H21EfficiencySettings.ToDouble(),
-                    H22Efficiency = _settingsService.H22EfficiencySettings.ToDouble(),
-                    H23Efficiency = _settingsService.H23EfficiencySettings.ToDouble()
-                };
+                //Hours = new Hours
+                //{
+                //    H6 = _settingsService.H6Settings.ToInteger(),
+                //    H7 = _settingsService.H7Settings.ToInteger(),
+                //    H8 = _settingsService.H8Settings.ToInteger(),
+                //    H9 = _settingsService.H9Settings.ToInteger(),
+                //    H10 = _settingsService.H10Settings.ToInteger(),
+                //    H11 = _settingsService.H11Settings.ToInteger(),
+                //    H12 = _settingsService.H12Settings.ToInteger(),
+                //    H13 = _settingsService.H13Settings.ToInteger(),
+                //    H14 = _settingsService.H14Settings.ToInteger(),
+                //    H15 = _settingsService.H15Settings.ToInteger(),
+                //    H16 = _settingsService.H16Settings.ToInteger(),
+                //    H17 = _settingsService.H17Settings.ToInteger(),
+                //    H18 = _settingsService.H18Settings.ToInteger(),
+                //    H19 = _settingsService.H19Settings.ToInteger(),
+                //    H20 = _settingsService.H20Settings.ToInteger(),
+                //    H21 = _settingsService.H21Settings.ToInteger(),
+                //    H22 = _settingsService.H22Settings.ToInteger(),
+                //    H23 = _settingsService.H23Settings.ToInteger()
+                //};
+                //EfficiencyForHours = new EfficiencyForHours
+                //{
+                //    H6Efficiency = _settingsService.H6EfficiencySettings.ToDouble(),
+                //    H7Efficiency = _settingsService.H7EfficiencySettings.ToDouble(),
+                //    H8Efficiency = _settingsService.H8EfficiencySettings.ToDouble(),
+                //    H9Efficiency = _settingsService.H9EfficiencySettings.ToDouble(),
+                //    H10Efficiency = _settingsService.H10EfficiencySettings.ToDouble(),
+                //    H11Efficiency = _settingsService.H11EfficiencySettings.ToDouble(),
+                //    H12Efficiency = _settingsService.H12EfficiencySettings.ToDouble(),
+                //    H13Efficiency = _settingsService.H13EfficiencySettings.ToDouble(),
+                //    H14Efficiency = _settingsService.H14EfficiencySettings.ToDouble(),
+                //    H15Efficiency = _settingsService.H15EfficiencySettings.ToDouble(),
+                //    H16Efficiency = _settingsService.H16EfficiencySettings.ToDouble(),
+                //    H17Efficiency = _settingsService.H17EfficiencySettings.ToDouble(),
+                //    H18Efficiency = _settingsService.H18EfficiencySettings.ToDouble(),
+                //    H19Efficiency = _settingsService.H19EfficiencySettings.ToDouble(),
+                //    H20Efficiency = _settingsService.H20EfficiencySettings.ToDouble(),
+                //    H21Efficiency = _settingsService.H21EfficiencySettings.ToDouble(),
+                //    H22Efficiency = _settingsService.H22EfficiencySettings.ToDouble(),
+                //    H23Efficiency = _settingsService.H23EfficiencySettings.ToDouble()
+                //};
                 Norm = _settingsService.JobNormSettings;
                 EfficiencyTotal = _settingsService.TotalEfficiencySettings.ToDouble();
                 Counter = _settingsService.CounterSettings.ToInteger();
@@ -317,11 +317,11 @@ namespace SmartB.Core.ViewModels
                 {
                     int.TryParse(_settingsService.CommessaIdSettings, out int commessaId);
                     int.TryParse(_settingsService.PhaseIdSettings, out int phaseId);
-                    string barCode = _settingsService.CommessaFromBarcode;
-                    var commessa = await _commessaService.GetCommessaTimAsync(barCode);
+                    string barCode =_settingsService.CommessaFromBarcode;
+                    var commessa = await _comenziService.GetOrderWithName(barCode);
                     int producedQuantity = await _jobService.GetProducedPieces(commessaId, phaseId);
-
-                    if (producedQuantity > commessa.Quantity && !_workPermitOverQuantity)
+                  
+                    if (producedQuantity > commessa.Cantitate && !_workPermitOverQuantity)
                     {
                         var result = _dialogService.ShowPromptDialog("Please enter the pin to continue.", "Confirmation", "Ok", "Cancel", "Pin");
                         if (!result.Result.Ok)
@@ -355,14 +355,14 @@ namespace SmartB.Core.ViewModels
                     Counter++;
                     TotalPieces++;
                     await CheckMachineState();
-                    await PiecesByHour(clickTime);
+                    //await PiecesByHour(clickTime); // no pieces
                     await _butoaneService.AddClick(click);
-                    //  await UpdateJobFirstWrite(clickTime);
-                    await WeightedAverage(idleClickTime, clickTime);
-                    await EfficiencyByHour(clickTime);
+                    //  await UpdateJobFirstWrite(clickTime); 
+                    //await WeightedAverage(idleClickTime, clickTime);
+                    //await EfficiencyByHour(clickTime); //no eff
                     _settingsService.LastClickSetting = clickTime.ToString();
-                    //await WaitAndExecute(15000/*(int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3*/,
-                      await  EnableClickPieceButton(15000);
+                    await WaitAndExecute(15000/*(int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3*/,
+                   EnableClickPieceButton);
                     _settingsService.CounterSettings = Counter.ToString();
                     _settingsService.TotalEfficiencySettings = EfficiencyTotal.ToString();
                     _settingsService.TotalPiecesSettings = TotalPieces.ToString();
@@ -978,7 +978,7 @@ namespace SmartB.Core.ViewModels
         #region Click Button Properties
         private double _animationDuration;
         private bool _isBusyIndicator;
-        private bool _isButtonEnabled;
+        private bool _isButtonEnabled=true;
 
         public double AnimationDuration
         {

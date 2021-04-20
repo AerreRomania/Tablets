@@ -80,13 +80,14 @@
                     Color="Gray" />
             </StackLayout>
 
-            <StackLayout Margin="5,0,0,0">
+            <StackLayout Margin="5,0,0,0" HorizontalOptions="FillAndExpand">
                 <StackLayout Orientation="Horizontal">
                     <xForms:SfAutoComplete
                         x:Name="AutoCompleteMachine"
                         AutoCompleteMode="SuggestAppend"
                         DataSource="{Binding Machines}"
                         DisplayMemberPath="CodeAndName"
+                        HorizontalOptions="FillAndExpand"
                         IsSelectedItemsVisibleInDropDown="False"
                         ItemTemplate="{StaticResource MachineDataTemplateSelector}"
                         Keyboard="Numeric"
@@ -97,8 +98,7 @@
                         TextHighlightMode="FirstOccurrence"
                         TextSize="23"
                         VerticalOptions="StartAndExpand"
-                        Watermark="Select Machine"
-                        WidthRequest="400" />
+                        Watermark="Select Machine" />
 
                     <button:SfButton
                         BackgroundColor="Gray"
@@ -108,7 +108,7 @@
                         CornerRadius="10"
                         FontSize="20"
                         HasShadow="True"
-                        HorizontalOptions="Center"
+                        HorizontalOptions="EndAndExpand"
                         Text="Scan Barcode"
                         VerticalOptions="Center" />
                 </StackLayout>
@@ -119,6 +119,7 @@
                         AutoCompleteMode="SuggestAppend"
                         DataSource="{Binding Orders}"
                         DisplayMemberPath="NrComanda"
+                        HorizontalOptions="FillAndExpand"
                         IsSelectedItemsVisibleInDropDown="False"
                         Keyboard="Numeric"
                         MaximumDropDownHeight="200"
@@ -128,8 +129,7 @@
                         TextHighlightMode="FirstOccurrence"
                         TextSize="23"
                         VerticalOptions="StartAndExpand"
-                        Watermark="Select Comessa"
-                        WidthRequest="400" />
+                        Watermark="Select Comessa" />
 
 
                     <button:SfButton
@@ -140,7 +140,7 @@
                         CornerRadius="10"
                         FontSize="20"
                         HasShadow="True"
-                        HorizontalOptions="Center"
+                        HorizontalOptions="EndAndExpand"
                         Text="Scan Barcode"
                         VerticalOptions="Center" />
                 </StackLayout>
@@ -153,7 +153,7 @@
                 TextColor="Black" />
             <StackLayout>
                 <listview:SfListView
-                    Margin="20,0,0,0"
+                    Margin="10,0,0,0"
                     AutoFitMode="DynamicHeight"
                     ItemsSource="{Binding Phases}"
                     SelectedItem="{Binding SelectedPhase}"
@@ -215,6 +215,7 @@
                 </listview:SfListView>
 
                 <button:SfButton
+                    Margin="20"
                     BackgroundColor="Gray"
                     BorderColor="Crimson"
                     BorderWidth="1"
@@ -222,10 +223,9 @@
                     CornerRadius="10"
                     FontSize="23"
                     HasShadow="True"
-                    HorizontalOptions="Center"
+                    HorizontalOptions="FillAndExpand"
                     Text="Continue"
-                    VerticalOptions="Center"
-                    WidthRequest="300" />
+                    VerticalOptions="Center" />
             </StackLayout>
 
         </StackLayout>
