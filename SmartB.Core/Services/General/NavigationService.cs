@@ -31,6 +31,7 @@ namespace SmartB.Core.Services.General
             else
             {
                 await NavigateToAsync<LoginViewModel>();
+                //await NavigateToAsync<JobViewModel>();
             }
         }
         public async Task ClearBackStack()
@@ -154,6 +155,7 @@ namespace SmartB.Core.Services.General
             _mappings.Add(typeof(ScannerViewModel), typeof(ScannerView));
             _mappings.Add(typeof(JobViewModel), typeof(JobView));
             _mappings.Add(typeof(ManichinoViewModel), typeof(ManichinoView));
+            _mappings.Add(typeof(EfficiencyViewModel), typeof(EfficiencyView));
         }
     }
 }

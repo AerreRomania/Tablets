@@ -25,6 +25,7 @@ namespace SmartB.Core.Bootstrap
             builder.RegisterType<ScannerViewModel>();
             builder.RegisterType<JobViewModel>();
             builder.RegisterType<ManichinoViewModel>();
+            builder.RegisterType<EfficiencyViewModel>();
             //services - data
             builder.RegisterType<UsersDataService>().As<IUsersDataService>();
             builder.RegisterType<MasiniService>().As<IMasiniService>();

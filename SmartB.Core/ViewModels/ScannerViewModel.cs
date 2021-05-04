@@ -275,7 +275,8 @@ namespace SmartB.Core.ViewModels
                                 MasiniForUpdate machineToUpdate = new MasiniForUpdate
                                 {
                                     Id = machineId,
-                                    Occupied = true
+                                    Occupied = true,
+                                    Active=true,
                                 };
 
 

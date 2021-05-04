@@ -67,6 +67,15 @@ namespace SmartB.Core.ViewModels
         public ICommand SavePiece => new Command(OnSavePiece);
         public ICommand StopJobCommand => new Command(OnStopJobCommand);
         public ICommand StopStopwatchCommand => new Command(OnStopStopwatchCommand);
+        public ICommand EfficiencyCommand => new Command(OnEfficiecyCommand);
+
+        private async void OnEfficiecyCommand(object obj)
+        {
+            var dialog = _dialogService.ShowProgressDialog("Please Wait...");
+            dialog.Show();
+            await _navigationService.NavigateToAsync<EfficiencyViewModel>();
+            dialog.Hide();
+        }
         public override async Task InitializeAsync(object data)
         {
             var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
@@ -100,7 +109,7 @@ namespace SmartB.Core.ViewModels
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Logging out... ");
                 dialog.Show();
-                await UpdateJobLastWrite();
+                await UpdateJobLastWrite(false);
                 var user = await _usersService.GetUser(_settingsService.UserIdSetting);
                 if (user.Active)
                 {
@@ -390,7 +399,7 @@ namespace SmartB.Core.ViewModels
             {
                 var machine = await _masiniService.GetMachineStateAsync(_settingsService.MachineIdSettings);
                 if (machine) return;
-                await UpdateJobLastWrite();
+                await UpdateJobLastWrite(false);
                 await _navigationService.NavigateBackAsync();
                 await _dialogService.ShowDialog("Only one machine can be in use", " Machine is deactivated!", "OK");
             }
@@ -413,7 +422,7 @@ namespace SmartB.Core.ViewModels
             try
             {
                 dialog.Show();
-                await UpdateJobLastWrite();
+                await UpdateJobLastWrite(true);
                 dialog.Hide();
             }
             catch (HttpRequestExceptionEx e)
@@ -645,7 +654,7 @@ namespace SmartB.Core.ViewModels
         //        throw;
         //    }
         //}
-        private async Task UpdateJobLastWrite()
+        private async Task UpdateJobLastWrite(bool isStop)
         {
             try
             {
@@ -671,11 +680,16 @@ namespace SmartB.Core.ViewModels
                 await _jobService.UpdateJob(job.Id.ToString(), job);
                 await AddEfficiencyForJob(job);
 
-                //if (machine.Active)
-                //{
-                //    machine.Active = false;
-                //    await _masiniService.UpdateMachineActivity(machine.Id, machine);
-                //}
+                if (machine.Active && isStop)
+                {
+                    MasiniForUpdate machineToUpdate = new MasiniForUpdate()
+                    {
+                        Id = machine.Id,
+                        Occupied = false,
+                        Active = false
+                    };
+                    await _masiniService.UpdateMachineActivity(machineToUpdate, machineToUpdate.Id);
+                }
 
                 _settingsService.JobIdSettings = null;
                 _settingsService.JobNormSettings = null;

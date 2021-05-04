@@ -55,7 +55,7 @@ namespace SmartB.Core.ViewModels
                 Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
                 {
                     Id = machine.Id,
-                    Occupied = false,
+                    Occupied = true,
                     Active=true
                 };
                 await _masiniService.UpdateMachineActivity(machineToUpdate,machineToUpdate.Id);
@@ -82,13 +82,13 @@ namespace SmartB.Core.ViewModels
                 job.Closed = currentTime;
                 await _jobDataService.UpdateJob(job.Id.ToString(), job);
 
-                Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
-                {
-                    Id = machine.Id,
-                    Occupied = false
-                };
-
-                await _masiniService.UpdateMachineActivity(machineToUpdate, machineToUpdate.Id);
+                //Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
+                //{
+                //    Id = machine.Id,
+                //    Occupied = false,
+                //    Active = false
+                //};
+                //await _masiniService.UpdateMachineActivity(machineToUpdate, machine.Id);
 
                 //if (machine.Active)
                 //{

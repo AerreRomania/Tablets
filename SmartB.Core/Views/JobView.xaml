@@ -33,7 +33,7 @@
     </ContentPage.Resources>
     <ContentPage.Content>
 
-        <StackLayout>
+        <StackLayout Margin="10,10,10,0">
 
 
             <StackLayout HorizontalOptions="Center" Orientation="Horizontal">
@@ -91,11 +91,12 @@
                     </StackLayout>
                 </Frame>
 
-                <!--<Frame
+                <Frame
                     Padding="0"
                     BackgroundColor="White"
                     BorderColor="Red"
                     CornerRadius="10"
+                    HorizontalOptions="Center"
                     WidthRequest="150">
                     <StackLayout>
                         <Label
@@ -109,13 +110,16 @@
                         <Label
                             FontAttributes="Bold"
                             FontFamily="SegoeUI"
-                            FontSize="30"
+                            FontSize="Medium"
                             HorizontalTextAlignment="Center"
-                            Text="{Binding EfficiencyCurrent, Mode=TwoWay, StringFormat='{0:0}%'}"
+                            Text="Total/Intervali %"
                             TextColor="Crimson"
                             VerticalTextAlignment="End" />
                     </StackLayout>
-                </Frame>-->
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding EfficiencyCommand}" />
+                    </Frame.GestureRecognizers>
+                </Frame>
             </StackLayout>
 
             <!--<StackLayout HorizontalOptions="CenterAndExpand">
@@ -238,7 +242,7 @@
             <StackLayout
                 HorizontalOptions="CenterAndExpand"
                 Orientation="Horizontal"
-                Spacing="50">
+                Spacing="40">
                 <buttons:SfButton
                     BackgroundColor="Gray"
                     BorderColor="Crimson"
