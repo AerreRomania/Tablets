@@ -91,7 +91,7 @@
                     </StackLayout>
                 </Frame>
 
-                <Frame
+                <!--<Frame
                     Padding="0"
                     BackgroundColor="White"
                     BorderColor="Red"
@@ -119,7 +119,7 @@
                     <Frame.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding EfficiencyCommand}" />
                     </Frame.GestureRecognizers>
-                </Frame>
+                </Frame>-->
             </StackLayout>
 
             <!--<StackLayout HorizontalOptions="CenterAndExpand">

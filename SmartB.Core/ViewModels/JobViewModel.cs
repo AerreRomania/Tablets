@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Acr.UserDialogs;
 using SmartB.Core.Contracts.Services.Data;
 using SmartB.Core.Contracts.Services.General;
 using SmartB.Core.DTOs;
@@ -105,6 +106,7 @@ namespace SmartB.Core.ViewModels
             try
             {
                 var currentDate = await _jobService.GetServerDateTime();
+                //var currentDate = DateTime.Now;
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == 0) return false;
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Logging out... ");
@@ -170,7 +172,7 @@ namespace SmartB.Core.ViewModels
                 if (span != null)
                 {
                     var norm = _settingsService.JobNormSettings.ToInteger();
-                    var currentTime = await _jobService.GetServerDateTime();
+                   // var currentTime = await _jobService.GetServerDateTime();
                     double normForHours = _counter / norm * 100f;
                     var efficiency = span.Value.Ticks == 0 ? 0.0 : normForHours;
                     var jobEfficiency = new JobEfficiency
@@ -332,32 +334,40 @@ namespace SmartB.Core.ViewModels
                   
                     if (producedQuantity > commessa.Cantitate && !_workPermitOverQuantity)
                     {
-                        var result = _dialogService.ShowPromptDialog("Please enter the pin to continue.", "Confirmation", "Ok", "Cancel", "Pin");
-                        if (!result.Result.Ok)
+                        // await _dialogService.ShowDialog("Test", "Test", "Ok");
+                        var result = await _dialogService.ShowPromptDialog("Please enter the pin to continue and make more.", "Maxim Quanity is done!", "Ok", "Cancel", "Pin");
+                        if (!result.Ok)
                             return;
                         else
                         {
-                            string pin = result.Result.Text;
+                            string pin = result.Text;
                             if (!string.IsNullOrEmpty(pin))
                             {
                                 bool isManager = await _usersService.GetManagerAsync(pin);
 
-                                if(isManager)
+                                if (isManager)
                                     _workPermitOverQuantity = true;
+                                else
+                                {
+                                    await _dialogService.ShowDialog("Please change JOB!", "Maxim quantity is done", "Ok");
+                                    return;
+                                }
                             }
                             else
+                            {
+                                await _dialogService.ShowDialog("Please change JOB!", "Maxim quantity is done", "Ok");
                                 return;
+                            }
                         }
                     }
 
                     var normHour = _settingsService.JobNormSettings.ToInteger();
                     var idleClickTime = new TimeSpan(1, 0, 0).TotalMinutes / normHour;
-                    var clickTime = await _jobService.GetServerDateTime();
+                    //var clickTime = await _jobService.GetServerDateTime();
                     var click = new Click
                     {
                         Adresa = 0410,
                         Buton = false,
-                        Data = clickTime,
                         IdRealizare = _settingsService.JobIdSettings.ToInteger(),
                         IdDifetto = null
                     };
@@ -369,9 +379,8 @@ namespace SmartB.Core.ViewModels
                     //  await UpdateJobFirstWrite(clickTime); 
                     //await WeightedAverage(idleClickTime, clickTime);
                     //await EfficiencyByHour(clickTime); //no eff
-                    _settingsService.LastClickSetting = clickTime.ToString();
-                    await WaitAndExecute(15000/*(int) TimeSpan.FromMinutes(idleClickTime).TotalMilliseconds / 3*/,
-                   EnableClickPieceButton);
+                    _settingsService.LastClickSetting = DateTime.Now.ToString();//clickTime.ToString();
+                    await WaitAndExecute(10000,EnableClickPieceButton);
                     _settingsService.CounterSettings = Counter.ToString();
                     _settingsService.TotalEfficiencySettings = EfficiencyTotal.ToString();
                     _settingsService.TotalPiecesSettings = TotalPieces.ToString();
@@ -678,7 +687,7 @@ namespace SmartB.Core.ViewModels
                     job.Closed = currentTime;
                 }
                 await _jobService.UpdateJob(job.Id.ToString(), job);
-                await AddEfficiencyForJob(job);
+                //await AddEfficiencyForJob(job);
 
                 if (machine.Active && isStop)
                 {
@@ -704,7 +713,7 @@ namespace SmartB.Core.ViewModels
             }
             catch (Exception e)
             {
-                await _dialogService.ShowDialog(e.Message, "Exception:UpdateJobLastWrite", "OK");
+                await _dialogService.ShowDialog(e.Message, "Exception:UpdateJobLastWrite"+e, "OK");
             }
         }
         private async Task WeightedAverage(double normInMinutes, DateTime clickTime)

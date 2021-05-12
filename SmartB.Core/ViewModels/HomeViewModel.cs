@@ -154,7 +154,8 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                var currentDate = await _jobDataService.GetServerDateTime();
+                //var currentDate = await _jobDataService.GetServerDateTime();
+                var currentDate = DateTime.Now;
                 if (Convert.ToDateTime(_settingsService.UserLoginDateSettings).Day == 0) return false;
                 if (Convert.ToDateTime(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Logging out... ");
@@ -267,28 +268,28 @@ namespace SmartB.Core.ViewModels
         //                "OK");
         //    }
         //}
-        private async Task SaveJob()
+        private async Task<bool> SaveJob()
         {
             try
             {
                 //   await SaveDeviceUsage();
                 var userId = _settingsService.UserIdSetting.ToInteger();
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-                var jobCreationTime = await _jobDataService.GetServerDateTime();
+               // var jobCreationTime = await _jobDataService.GetServerDateTime();
                 var job = new Job
                 {
                     IdAngajat = userId,
                     IdMasina = machine.Id,
                     IdComanda = _selectedOrder.Id,
                     IdOperatie = _selectedPhase.Id,
-                    Creat = jobCreationTime,
+                    //Creat = jobCreationTime,
                     Cantitate = 0410,
                     LastWrite = null,
                     Inchis = true,
                     FirstWrite = null
                 };
                 machine.Active = true;
-                machine.LastTimeUsed = jobCreationTime;
+                machine.LastTimeUsed = DateTime.Now;
                 //Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
                 //{
                 //    Id = machine.Id,
@@ -302,18 +303,21 @@ namespace SmartB.Core.ViewModels
                 _settingsService.OneClickWorthSettings = _selectedPhase.BucatiButon.ToString();
                 _settingsService.SelectedPhaseSettings = _selectedPhase.Operatie;
                 _settingsService.CounterSettings = null;
+                return true;
             }
             catch (HttpRequestExceptionEx e)
             {
                 await _dialogService.ShowDialog($"{e.Message}",
                     "OnAddJobCommand:Exception",
                     "OK");
+                return false;
             }
             catch (Exception e)
             {
                 await _dialogService.ShowDialog($"{e.Message}",
                     "OnAddJobCommand:Exception",
                     "OK");
+                return false;
             }
         }
         private async void OnAddJobCommand(object o)
@@ -329,15 +333,17 @@ namespace SmartB.Core.ViewModels
                 {
                     if (machine.Descriere == "MANICHINO")
                     {
-                        await SaveJob();
-                        await _navigationService.NavigateToAsync<StartManichinoViewModel>();
-                       // await _navigationService.NavigateToAsync<ManichinoViewModel>();
+                       bool issaved= await SaveJob();
+                        if (issaved)  await _navigationService.NavigateToAsync<StartManichinoViewModel>();
+                        // await _navigationService.NavigateToAsync<ManichinoViewModel>();
+                        else return;
                         dialog.Hide();
                     }
                     else
                     {
-                        await SaveJob();
-                        await _navigationService.NavigateToAsync<StartJobViewModel>();
+                        bool issaved = await SaveJob();
+                        if (issaved) await _navigationService.NavigateToAsync<StartJobViewModel>();
+                        else return;
                         // await _navigationService.NavigateToAsync<JobViewModel>();
                         dialog.Hide();
                     }

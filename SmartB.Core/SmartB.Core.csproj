@@ -19,6 +19,7 @@
     <PackageReference Include="Syncfusion.Xamarin.SfGauge" Version="17.3.0.14" />
     <PackageReference Include="Syncfusion.Xamarin.SfListView" Version="17.3.0.14" />
     <PackageReference Include="Syncfusion.Xamarin.SfPopupLayout" Version="17.3.0.14" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
     <PackageReference Include="Xam.Plugin.Connectivity" Version="3.2.0" />
     <PackageReference Include="Xam.Plugin.DeviceInfo" Version="4.1.1" />
     <PackageReference Include="Xam.Plugins.Messaging" Version="5.2.0" />

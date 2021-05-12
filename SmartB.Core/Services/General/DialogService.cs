@@ -9,9 +9,16 @@ namespace SmartB.Core.Services.General
                                      string confirmationButton, string cancelButton,
                                      string pin)
         {
-            return UserDialogs.Instance.PromptAsync(message, title,
-                                                    confirmationButton, cancelButton,
-                                                    pin);
+            var config = new PromptConfig()
+            {
+                Message = message,
+                Title = title,
+                OkText = confirmationButton,
+                CancelText = cancelButton,
+                Placeholder = pin,
+                InputType= InputType.NumericPassword
+            };
+            return UserDialogs.Instance.PromptAsync(config);
         }
         public Task ShowDialog(string message, string title, string buttonLabel)
         {

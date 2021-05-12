@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace SmartB.Core.Models
 {
     public class Job
@@ -8,6 +10,7 @@ namespace SmartB.Core.Models
         public int IdMasina { get; set; }
         public int IdComanda { get; set; }
         public int IdOperatie { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime Creat { get; set; }
         public int Cantitate { get; set; }
         public DateTime? Closed { get; set; }
