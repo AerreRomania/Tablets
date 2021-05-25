@@ -79,11 +79,15 @@ namespace SmartB.Core.ViewModels
         }
         public override async Task InitializeAsync(object data)
         {
+            var currentDate = await _jobService.GetServerDateTime();
             //var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
             //if (isLoggedFromYesterday)
             //    return;
             ////   MessagingCenter.Send(this, "connectToBT", _settingsService.MachineCodeSettings);
-            await ShiftControl(DateTime.Now.Hour);
+            await ShiftControl(currentDate.Hour);
+           
+            if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == 0) _settingsService.CounterSettings = "0" ;
+            if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) _settingsService.CounterSettings = "0";
             await FillLocalJobData();
             var normHour = _settingsService.JobNormSettings.ToInteger();
             var clickWorth = _settingsService.OneClickWorthSettings.ToInteger();
@@ -112,7 +116,7 @@ namespace SmartB.Core.ViewModels
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Checking user... ");
                 dialog.Show();
-                await UpdateJobLastWrite(true);
+                await UpdateJobLastWrite(false);
                 var user = await _usersService.GetUser(_settingsService.UserIdSetting);
                 if (user.Active)
                 {

@@ -55,7 +55,7 @@ namespace SmartB.Core.ViewModels
                 Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
                 {
                     Id = machine.Id,
-                    Occupied = true,
+                    Occupied = false,
                     Active=true
                 };
                 await _masiniService.UpdateMachineActivity(machineToUpdate,machineToUpdate.Id);

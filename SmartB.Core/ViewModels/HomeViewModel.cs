@@ -117,7 +117,7 @@ namespace SmartB.Core.ViewModels
             }
             catch (HttpRequestExceptionEx e)
             {
-                await _dialogService.ShowDialog(e.HttpCode.ToString(), "HttpRequestExceptionEx:FetchData", "OK");
+                await _dialogService.ShowDialog(e.HttpCode.ToString(), "HttpRequestExceptionEx: FetchData, Please login or press Refresh button.", "OK");
             }
             catch (Exception)
             {
@@ -154,8 +154,8 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                //var currentDate = await _jobDataService.GetServerDateTime();
-                var currentDate = DateTime.Now;
+                var currentDate = await _jobDataService.GetServerDateTime();
+                //var currentDate = DateTime.Now;
                 if (Convert.ToDateTime(_settingsService.UserLoginDateSettings).Day == 0) return false;
                 if (Convert.ToDateTime(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Logging out... ");
