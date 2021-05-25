@@ -14,6 +14,7 @@ namespace SmartB.Core.Services.General
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly Dictionary<Type, Type> _mappings;
+        private SettingsService _settings = new SettingsService();
         protected Application CurrentApplication => Application.Current;
         public NavigationService(IAuthenticationService authenticationService)
         {
@@ -30,7 +31,8 @@ namespace SmartB.Core.Services.General
             }
             else
             {
-                await NavigateToAsync<LoginViewModel>();
+                _settings.UserNameSetting = "Please Login !";
+                await NavigateToAsync<MainViewModel>();
                 //await NavigateToAsync<JobViewModel>();
             }
         }

@@ -27,7 +27,7 @@ namespace SmartB.Core.Repository
                     })
                     .WaitAndRetryAsync
                     (
-                        10,
+                        5,
                         retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
                     )
                     .ExecuteAsync(async () => await httpClient.GetAsync(uri));

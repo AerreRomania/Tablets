@@ -72,32 +72,41 @@ namespace SmartB.Core.ViewModels
         }
         private async void OnMenuItemTapped(object menuItemTappedEventArgs)
         {
-            if ((menuItemTappedEventArgs as ItemTappedEventArgs)?.Item is MainMenuItem menuItem && menuItem.MenuText == "Log out")
+            if ((menuItemTappedEventArgs as ItemTappedEventArgs)?.Item is MainMenuItem menuItem && menuItem.MenuText == "Change User")
             {
                 bool isJobFinished = _settingsService.JobIdSettings == string.Empty;
                 if (isJobFinished)
                 {
                     try
                     {
-                        var dialog = _dialogService.ShowProgressDialog("Logging out... ");
+                        var dialog = _dialogService.ShowProgressDialog("Changeing user...");
                         dialog.Show();
-                        var user = await _userDataService.GetUser(_settingsService.UserIdSetting);
-                        if (user.Active)
+                        if (string.IsNullOrEmpty(_settingsService.UserIdSetting))
                         {
-                            user.Active = false;
-                            await _userDataService.UpdateUserActivity(user.Id.ToString(), user);
+                            await _navigationService.NavigateToAsync<LoginViewModel>();
+                            dialog.Hide();
                         }
-                        //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
+                        else
+                        {
+                            var user = await _userDataService.GetUser(_settingsService.UserIdSetting);
 
-                        //if (device.Active)
-                        //{
-                        //    device.Active = false;
-                        //    await _deviceDataService.UpdateDevice(device, _settingsService.DeviceIdSettings);
-                        //}
-                        _settingsService.RemoveSettings();
-                        await _navigationService.ClearBackStack();
-                        dialog.Hide();
-                        ClearApplicationCache();
+                            if (user.Active)
+                            {
+                                user.Active = false;
+                                await _userDataService.UpdateUserActivity(user.Id.ToString(), user);
+                            }
+                            //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
+
+                            //if (device.Active)
+                            //{
+                            //    device.Active = false;
+                            //    await _deviceDataService.UpdateDevice(device, _settingsService.DeviceIdSettings);
+                            //}
+                            _settingsService.RemoveSettings();
+                            await _navigationService.ClearBackStack();
+                            dialog.Hide();
+                            ClearApplicationCache();
+                        }
                     }
                     catch (Exception e)
                     {
@@ -121,7 +130,6 @@ namespace SmartB.Core.ViewModels
             {
                 Directory.Delete(cache, true);
             }
-
             if (!Directory.Exists(cache))
             {
                 Directory.CreateDirectory(cache);
@@ -154,7 +162,7 @@ namespace SmartB.Core.ViewModels
             //});
             MenuItems.Add(new MainMenuItem
             {
-                MenuText = "Log out",
+                MenuText = "Change User",
                 ViewModelToLoad = typeof(LoginViewModel),
                 MenuItemType = MenuItemType.Logout
             });

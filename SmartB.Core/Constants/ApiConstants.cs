@@ -6,7 +6,8 @@
         {
         }
         //public const string BaseApiUrl = "http://192.168.96.37:47001/";
-        public const string BaseApiUrl = "http://192.168.96.37:47003/";
+		  public const string BaseApiUrl = "http://192.168.96.37:47003/";
+        //public const string BaseApiUrl = "http://192.168.1.13:8181/";
         //public const string BaseApiUrl = "http://192.168.8.100:5000/";
 
         public const string UsersEndpoint = "api/users/names";

@@ -63,6 +63,7 @@ namespace SmartB.Core.Services.General
         private const string UserLine = "UserLine";
         private const string UserLoginDate = "UserPassword";
         private const string UserName = "UserName";
+        private const string Pin = "Pin";
         private const string UserSector = "UserSector";
         private const string DeviceId = "DeviceId";
         private const string TotalPieces = "TotalPieces";
@@ -367,6 +368,11 @@ namespace SmartB.Core.Services.General
         {
             get => GetItem(UserName);
             set => AddItem(UserName, value);
+        }
+        public string PinSettings
+        {
+            get => GetItem(Pin);
+            set => AddItem(Pin, value);
         }
         public string UserSectorSettings
         {

@@ -64,8 +64,8 @@ namespace SmartB.Core.ViewModels
         }
         public override async Task InitializeAsync(object data)
         {
-            var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
-            if (isLoggedFromYesterday) return;
+            //var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
+            //if (isLoggedFromYesterday) return;
             try
             {
                 if (_settingsService.JobIdSettings != string.Empty)
@@ -285,18 +285,22 @@ namespace SmartB.Core.ViewModels
                     //Creat = jobCreationTime,
                     Cantitate = 0410,
                     LastWrite = null,
-                    Inchis = true,
+                    Inchis = false,
                     FirstWrite = null
                 };
-                machine.Active = true;
-                machine.LastTimeUsed = DateTime.Now;
+
                 //Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
                 //{
                 //    Id = machine.Id,
-                //    Occupied = true
+                //    Occupied = false,
+                //    Active = true
                 //};
-                //await _masiniService.UpdateMachineActivity(machineToUpdate); //last update
+                //await _masiniService.UpdateMachineActivity(machineToUpdate, machine.Id); //last update
                 var addedJob = await _jobDataService.AddJob(job);
+
+                machine.Active = true;
+                machine.LastTimeUsed = addedJob.Creat;
+
                 _settingsService.JobIdSettings = addedJob.Id.ToString();
                 _settingsService.JobsIdSettings += addedJob.Id + ",";
                 _settingsService.JobNormSettings = _selectedPhase.BucatiOra.ToString();

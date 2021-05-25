@@ -79,10 +79,10 @@ namespace SmartB.Core.ViewModels
         }
         public override async Task InitializeAsync(object data)
         {
-            var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
-            if (isLoggedFromYesterday)
-                return;
-            //   MessagingCenter.Send(this, "connectToBT", _settingsService.MachineCodeSettings);
+            //var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
+            //if (isLoggedFromYesterday)
+            //    return;
+            ////   MessagingCenter.Send(this, "connectToBT", _settingsService.MachineCodeSettings);
             await ShiftControl(DateTime.Now.Hour);
             await FillLocalJobData();
             var normHour = _settingsService.JobNormSettings.ToInteger();
@@ -105,43 +105,36 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                var currentDate = await _jobService.GetServerDateTime();
+                 var currentDate = await _jobService.GetServerDateTime();
+                //var currentDate = DateTime.Now.AddDays(1);
                 //var currentDate = DateTime.Now;
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == 0) return false;
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
-                var dialog = _dialogService.ShowProgressDialog("Logging out... ");
+                var dialog = _dialogService.ShowProgressDialog("Checking user... ");
                 dialog.Show();
-                await UpdateJobLastWrite(false);
+                await UpdateJobLastWrite(true);
                 var user = await _usersService.GetUser(_settingsService.UserIdSetting);
                 if (user.Active)
                 {
-                    user.Active = false;
-                    await _usersService.UpdateUserActivity(user.Id.ToString(), user);
+                    //user.Active = false;
+                    //await _usersService.UpdateUserActivity(user.Id.ToString(), user);
+                    dialog.Hide();
+                    return true;
                 }
-                var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-
-                //if (machine.Active)
-                //{
-                //    machine.Active = false;
-                //    await _masiniService.UpdateMachineActivity(machine.Id, machine);
-                //} //last update
-
-                //var device = await _deviceDataService.GetDevice(_settingsService.DeviceIdSettings);
-                //if (device.Active)
-                //{
-                //    device.Active = false;
-                //    await _deviceDataService.UpdateDevice(device, _settingsService.DeviceIdSettings);
-                //}
-                _settingsService.RemoveSettings();
-                dialog.Hide();
-                await _navigationService.ClearBackStack();
-                await _navigationService.NavigateToAsync<LoginViewModel>();
+                else
+                {
+                    _settingsService.RemoveSettings();
+                    dialog.Hide();
+                    await _navigationService.ClearBackStack();
+                    await _navigationService.NavigateToAsync<LoginViewModel>();
+                    return false;
+                }
             }
             catch (Exception)
             {
                 // ignored
+                return false;
             }
-            return true;
         }
         private async Task WaitAndExecute(int milliseconds, Action actionToExecute)
         {
@@ -409,7 +402,7 @@ namespace SmartB.Core.ViewModels
                 var machine = await _masiniService.GetMachineStateAsync(_settingsService.MachineIdSettings);
                 if (machine) return;
                 await UpdateJobLastWrite(false);
-                await _navigationService.NavigateBackAsync();
+                await _navigationService.NavigateToAsync<HomeViewModel>();
                 await _dialogService.ShowDialog("Only one machine can be in use", " Machine is deactivated!", "OK");
             }
             catch (HttpRequestExceptionEx exception)
