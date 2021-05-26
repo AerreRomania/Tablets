@@ -87,7 +87,7 @@ namespace SmartB.Core.ViewModels
             await ShiftControl(currentDate.Hour);
            
             if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == 0) _settingsService.CounterSettings = "0" ;
-            if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) _settingsService.CounterSettings = "0";
+            if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day != currentDate.Day) _settingsService.CounterSettings = "0";
             await FillLocalJobData();
             var normHour = _settingsService.JobNormSettings.ToInteger();
             var clickWorth = _settingsService.OneClickWorthSettings.ToInteger();
@@ -320,7 +320,8 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                await ShiftControl(DateTime.Now.Hour);
+                var clickTime = await _jobService.GetServerDateTime();
+                await ShiftControl(clickTime.Hour);
                 if (_connectionService.IsConnected)
                 {
                     int.TryParse(_settingsService.CommessaIdSettings, out int commessaId);
@@ -329,7 +330,7 @@ namespace SmartB.Core.ViewModels
                     var commessa = await _comenziService.GetOrderWithName(barCode);
                     int producedQuantity = await _jobService.GetProducedPieces(commessaId, phaseId);
                   
-                    if (producedQuantity > commessa.Cantitate && !_workPermitOverQuantity)
+                    if (producedQuantity >= commessa.Cantitate && !_workPermitOverQuantity)
                     {
                         // await _dialogService.ShowDialog("Test", "Test", "Ok");
                         var result = await _dialogService.ShowPromptDialog("Please enter the pin to continue and make more.", "Maxim Quanity is done!", "Ok", "Cancel", "Pin");
@@ -360,7 +361,7 @@ namespace SmartB.Core.ViewModels
 
                     var normHour = _settingsService.JobNormSettings.ToInteger();
                     var idleClickTime = new TimeSpan(1, 0, 0).TotalMinutes / normHour;
-                    //var clickTime = await _jobService.GetServerDateTime();
+                    
                     var click = new Click
                     {
                         Adresa = 0410,
@@ -376,7 +377,7 @@ namespace SmartB.Core.ViewModels
                     //  await UpdateJobFirstWrite(clickTime); 
                     //await WeightedAverage(idleClickTime, clickTime);
                     //await EfficiencyByHour(clickTime); //no eff
-                    _settingsService.LastClickSetting = DateTime.Now.ToString();//clickTime.ToString();
+                    _settingsService.LastClickSetting = clickTime.ToString();
                     await WaitAndExecute(10000,EnableClickPieceButton);
                     _settingsService.CounterSettings = Counter.ToString();
                     _settingsService.TotalEfficiencySettings = EfficiencyTotal.ToString();
