@@ -80,15 +80,17 @@ namespace SmartB.Core.ViewModels
         public override async Task InitializeAsync(object data)
         {
             var currentDate = await _jobService.GetServerDateTime();
-            //var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
-            //if (isLoggedFromYesterday)
-            //    return;
+            //var currentDate = DateTime.Now.AddDays(1);
+            var isLoggedFromYesterday = await IsCurrentUserLoggedFromYesterday();
+            if (isLoggedFromYesterday)
+                return;
             ////   MessagingCenter.Send(this, "connectToBT", _settingsService.MachineCodeSettings);
             await ShiftControl(currentDate.Hour);
            
-            if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == 0) _settingsService.CounterSettings = "0" ;
-            if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day != currentDate.Day) _settingsService.CounterSettings = "0";
-            await FillLocalJobData();
+            //if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == 0) _settingsService.TotalPiecesSettings = "0" ;
+            //if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day != currentDate.Day)
+            //{ _settingsService.TotalPiecesSettings = "0"; }
+            FillLocalJobData();
             var normHour = _settingsService.JobNormSettings.ToInteger();
             var clickWorth = _settingsService.OneClickWorthSettings.ToInteger();
             if (clickWorth != 1)
@@ -110,18 +112,19 @@ namespace SmartB.Core.ViewModels
             try
             {
                  var currentDate = await _jobService.GetServerDateTime();
-                //var currentDate = DateTime.Now.AddDays(1);
+                 //var currentDate = DateTime.Now.AddDays(1);
                 //var currentDate = DateTime.Now;
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == 0) return false;
                 if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == currentDate.Day) return false;
                 var dialog = _dialogService.ShowProgressDialog("Checking user... ");
                 dialog.Show();
-                await UpdateJobLastWrite(false);
+                await UpdateJobLastWrite(true);
                 var user = await _usersService.GetUser(_settingsService.UserIdSetting);
                 if (user.Active)
                 {
                     //user.Active = false;
                     //await _usersService.UpdateUserActivity(user.Id.ToString(), user);
+                    _settingsService.UserLoginDateSettings = currentDate.ToString();
                     dialog.Hide();
                     return true;
                 }
@@ -134,9 +137,10 @@ namespace SmartB.Core.ViewModels
                     return false;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 // ignored
+                await _dialogService.ShowDialog($"{ex}", "", "OK");
                 return false;
             }
         }
@@ -193,9 +197,9 @@ namespace SmartB.Core.ViewModels
             IsButtonEnabled = true;
             IsBusyIndicator = false;
         }
-        private async Task FillLocalJobData()
+        private void FillLocalJobData()
         {
-            await Task.Delay(100);
+            //await Task.Delay(100);
             try
             {
                 //Hours = new Hours
@@ -320,10 +324,11 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                var clickTime = await _jobService.GetServerDateTime();
-                await ShiftControl(clickTime.Hour);
-                if (_connectionService.IsConnected)
+                
+                if (await _connectionService.CheckConnection())
                 {
+                    var clickTime = await _jobService.GetServerDateTime();
+                    await ShiftControl(clickTime.Hour);
                     int.TryParse(_settingsService.CommessaIdSettings, out int commessaId);
                     int.TryParse(_settingsService.PhaseIdSettings, out int phaseId);
                     string barCode =_settingsService.CommessaFromBarcode;
@@ -389,6 +394,7 @@ namespace SmartB.Core.ViewModels
                         "Connection problem please connect your device to WIFI and try again.",
                         "Internet connection problem",
                         "OK");
+                    await WaitAndExecute(1000, EnableClickPieceButton);
                 }
             }
             catch (HttpRequestExceptionEx e)
@@ -428,9 +434,21 @@ namespace SmartB.Core.ViewModels
             var dialog = _dialogService.ShowProgressDialog("Please Wait...");
             try
             {
+
                 dialog.Show();
-                await UpdateJobLastWrite(true);
-                dialog.Hide();
+                if (await _connectionService.CheckConnection())
+                {
+                    await UpdateJobLastWrite(true);
+                    dialog.Hide();
+                }
+                else
+                {
+                    await _dialogService.ShowDialog(
+                        "Connection problem please connect your device to WIFI and try again.",
+                        "Internet connection problem",
+                        "OK");
+                    dialog.Hide();
+                }
             }
             catch (HttpRequestExceptionEx e)
             {
@@ -665,53 +683,57 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                var job = await _jobService.GetJob(_settingsService.JobIdSettings);
-                var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-                var lastWrite = await _jobService.GetLastClickForJob(_settingsService.JobIdSettings);
-                var currentTime = await _jobService.GetServerDateTime();
-                if (lastWrite == DateTime.Parse("11/11/2011 12:00:00 AM"))
-                {
-                    job.LastWrite = currentTime;
-                    job.Closed = currentTime;
-                }
-                else if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day != currentTime.Day)
-                {
-                    job.LastWrite = lastWrite;
-                    job.Closed = lastWrite;
-                }
-                else
-                {
-                    job.LastWrite = lastWrite;
-                    job.Closed = currentTime;
-                }
-                await _jobService.UpdateJob(job.Id.ToString(), job);
-                //await AddEfficiencyForJob(job);
-
-                if (machine.Active && isStop)
-                {
-                    MasiniForUpdate machineToUpdate = new MasiniForUpdate()
+               
+                    var job = await _jobService.GetJob(_settingsService.JobIdSettings);
+                    var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
+                    var lastWrite = await _jobService.GetLastClickForJob(_settingsService.JobIdSettings);
+                    var currentTime = await _jobService.GetServerDateTime();
+                    DateTime initialdate = DateTime.ParseExact("11/11/2011 00:00:00", "dd/MM/yyyy hh:mm:ss", null);
+                    if (lastWrite == initialdate)
                     {
-                        Id = machine.Id,
-                        Occupied = false,
-                        Active = false
-                    };
-                    await _masiniService.UpdateMachineActivity(machineToUpdate, machineToUpdate.Id);
-                }
+                        job.LastWrite = currentTime;
+                        job.Closed = currentTime;
+                    }
+                    else if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day != currentTime.Day)
+                    {
+                        job.LastWrite = lastWrite;
+                        job.Closed = lastWrite;
+                    }
+                    else
+                    {
+                        job.LastWrite = lastWrite;
+                        job.Closed = currentTime;
+                    }
+                    await _jobService.UpdateJob(job.Id.ToString(), job);
+                    //await AddEfficiencyForJob(job);
 
-                _settingsService.JobIdSettings = null;
-                _settingsService.JobNormSettings = null;
-                _settingsService.CounterSettings = null;
-                _settingsService.OneClickWorthSettings = null;
-                _settingsService.IsNormCalculatedSettings = null;
-                _settingsService.TotalEfficiencySettings = null;
-                _settingsService.SelectedPhaseSettings = null;
-                _settingsService.LastClickSetting = null;
-                // MessagingCenter.Send(this, "disconnectFromBT");
-                await _navigationService.NavigateToAsync<HomeViewModel>();
-            }
+                    if (machine.Active && isStop)
+                    {
+                        MasiniForUpdate machineToUpdate = new MasiniForUpdate()
+                        {
+                            Id = machine.Id,
+                            Occupied = false,
+                            Active = false
+                        };
+                        await _masiniService.UpdateMachineActivity(machineToUpdate, machineToUpdate.Id);
+                    }
+
+                    _settingsService.JobIdSettings = null;
+                    _settingsService.JobNormSettings = null;
+                    _settingsService.CounterSettings = null;
+                    _settingsService.OneClickWorthSettings = null;
+                    _settingsService.IsNormCalculatedSettings = null;
+                    _settingsService.TotalEfficiencySettings = null;
+                    _settingsService.SelectedPhaseSettings = null;
+                    _settingsService.LastClickSetting = null;
+                    // MessagingCenter.Send(this, "disconnectFromBT");
+                    await _navigationService.NavigateToAsync<HomeViewModel>();
+                }
+                
+            
             catch (Exception e)
             {
-                await _dialogService.ShowDialog(e.Message, "Exception:UpdateJobLastWrite"+e, "OK");
+                await _dialogService.ShowDialog(e.Message, "Exception:UpdateJobLastWrite" + e, "OK");
             }
         }
         private async Task WeightedAverage(double normInMinutes, DateTime clickTime)

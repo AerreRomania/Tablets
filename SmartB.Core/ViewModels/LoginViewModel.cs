@@ -104,7 +104,7 @@ namespace SmartB.Core.ViewModels
             IsBusy = true;
             var dialog = _dialogService.ShowProgressDialog("Logging in... ");
             dialog.Show();
-            if (_connectionService.IsConnected)
+            if (await _connectionService.CheckConnection())
             {
                 try
                 {

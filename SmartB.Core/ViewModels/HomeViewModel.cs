@@ -57,6 +57,7 @@ namespace SmartB.Core.ViewModels
         public ICommand RefreshData => new Command(OnRefreshData);
         private async void OnRefreshData()
         {
+
           var dialog =  _dialogService.ShowProgressDialog("Refreshing Data \n Please wait...");
           dialog.Show();
           await FetchData();
@@ -68,6 +69,11 @@ namespace SmartB.Core.ViewModels
             //if (isLoggedFromYesterday) return;
             try
             {
+                var currentDate = await _jobDataService.GetServerDateTime();
+                //var currentDate = DateTime.Now.AddDays(1);
+                if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day == 0) _settingsService.TotalPiecesSettings = "0";
+                if (DateTime.Parse(_settingsService.UserLoginDateSettings).Day != currentDate.Day)
+                { _settingsService.TotalPiecesSettings = "0"; }
                 if (_settingsService.JobIdSettings != string.Empty)
                 {
                     if (_settingsService.MachineNameSettings == "MANICHINO" || _settingsService.MachineNameSettings == "Manichino")
@@ -78,6 +84,7 @@ namespace SmartB.Core.ViewModels
                     await _navigationService.NavigateToAsync<JobViewModel>();
                     return;
                 }
+
                 await FetchData();
             }
             catch (HttpRequestExceptionEx e)
@@ -93,27 +100,39 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                var strSector = _settingsService.UserSectorSettings;
-                int sector = 0;
-                if (strSector == "Confection")
-                    sector = 1;
-                else if (strSector == "Stiro")
-                    sector = 2;
-                else if (strSector == "Ramendo")
-                    sector = 6;
-                else if (strSector == "Tessitura")
-                    sector = 7;
-                else if (strSector == "Sartoria")
-                    sector = 8;
-                Machines = (await _masiniService.GetMachinesAsync(sector, _settingsService.UserLineSettings)).ToObservableCollection();
-                Orders = (await _orderService.GetOrdersAsync(sector)).ToObservableCollection();
-                var machineId = _settingsService?.MachineIdSettings.ToInteger();
-                SelectedMachine = _machines.Any(m => m.Id == machineId)
-                    ? Machines?.FirstOrDefault(m => m.Id == machineId)
-                    : null;
-                SelectedOrder = _settingsService != null && _settingsService.CommessaFromBarcode != string.Empty
-                    ? (await _orderService.GetOrderWithName(_settingsService.CommessaFromBarcode))
-                    : null;
+                if (await _connectionService.CheckConnection())
+                {
+                    var strSector = _settingsService.UserSectorSettings;
+                    int sector = 0;
+                    if (strSector == "Confection")
+                        sector = 1;
+                    else if (strSector == "Stiro")
+                        sector = 2;
+                    else if (strSector == "Ramendo")
+                        sector = 6;
+                    else if (strSector == "Tessitura")
+                        sector = 7;
+                    else if (strSector == "Sartoria")
+                        sector = 8;
+                    Machines = (await _masiniService.GetMachinesAsync(sector, _settingsService.UserLineSettings)).ToObservableCollection();
+                    Orders = (await _orderService.GetOrdersAsync(sector)).ToObservableCollection();
+                    var machineId = _settingsService?.MachineIdSettings.ToInteger();
+                    SelectedMachine = _machines.Any(m => m.Id == machineId)
+                        ? Machines?.FirstOrDefault(m => m.Id == machineId)
+                        : null;
+                    SelectedOrder = _settingsService != null && _settingsService.CommessaFromBarcode != string.Empty
+                        ? (await _orderService.GetOrderWithName(_settingsService.CommessaFromBarcode))
+                        : null;
+
+                }
+                else
+                {
+                    await _dialogService.ShowDialog(
+                        "Connection problem please connect your device to WIFI and try again.",
+                        "Internet connection problem",
+                        "OK");
+
+                }
             }
             catch (HttpRequestExceptionEx e)
             {
@@ -272,43 +291,48 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                //   await SaveDeviceUsage();
-                var userId = _settingsService.UserIdSetting.ToInteger();
-                var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-               // var jobCreationTime = await _jobDataService.GetServerDateTime();
-                var job = new Job
-                {
-                    IdAngajat = userId,
-                    IdMasina = machine.Id,
-                    IdComanda = _selectedOrder.Id,
-                    IdOperatie = _selectedPhase.Id,
-                    //Creat = jobCreationTime,
-                    Cantitate = 0410,
-                    LastWrite = null,
-                    Inchis = false,
-                    FirstWrite = null
-                };
+               
+                    //   await SaveDeviceUsage();
+                    var userId = _settingsService.UserIdSetting.ToInteger();
+                    var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
+                    // var jobCreationTime = await _jobDataService.GetServerDateTime();
+                    var job = new Job
+                    {
+                        IdAngajat = userId,
+                        IdMasina = machine.Id,
+                        IdComanda = _selectedOrder.Id,
+                        IdOperatie = _selectedPhase.Id,
+                        //Creat = jobCreationTime,
+                        Cantitate = 0410,
+                        LastWrite = null,
+                        Inchis = false,
+                        FirstWrite = null
+                    };
 
-                //Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
-                //{
-                //    Id = machine.Id,
-                //    Occupied = false,
-                //    Active = true
-                //};
-                //await _masiniService.UpdateMachineActivity(machineToUpdate, machine.Id); //last update
-                var addedJob = await _jobDataService.AddJob(job);
+                    //Models.MasiniForUpdate machineToUpdate = new Models.MasiniForUpdate()
+                    //{
+                    //    Id = machine.Id,
+                    //    Occupied = false,
+                    //    Active = true
+                    //};
+                    //await _masiniService.UpdateMachineActivity(machineToUpdate, machine.Id); //last update
+                    var addedJob = await _jobDataService.AddJob(job);
 
-                machine.Active = true;
-                machine.LastTimeUsed = addedJob.Creat;
+                    machine.Active = true;
+                    machine.LastTimeUsed = addedJob.Creat;
 
-                _settingsService.JobIdSettings = addedJob.Id.ToString();
-                _settingsService.JobsIdSettings += addedJob.Id + ",";
-                _settingsService.JobNormSettings = _selectedPhase.BucatiOra.ToString();
-                _settingsService.OneClickWorthSettings = _selectedPhase.BucatiButon.ToString();
-                _settingsService.SelectedPhaseSettings = _selectedPhase.Operatie;
-                _settingsService.CounterSettings = null;
-                return true;
-            }
+                    _settingsService.JobIdSettings = addedJob.Id.ToString();
+                    _settingsService.JobsIdSettings += addedJob.Id + ",";
+                    _settingsService.JobNormSettings = _selectedPhase.BucatiOra.ToString();
+                    _settingsService.OneClickWorthSettings = _selectedPhase.BucatiButon.ToString();
+                    _settingsService.SelectedPhaseSettings = _selectedPhase.Operatie;
+                    _settingsService.CounterSettings = null;
+
+                    return true;
+                }
+
+               
+            
             catch (HttpRequestExceptionEx e)
             {
                 await _dialogService.ShowDialog($"{e.Message}",
@@ -328,44 +352,57 @@ namespace SmartB.Core.ViewModels
         {
             var dialog = _dialogService.ShowProgressDialog("Creating job... ");
             dialog.Show();
-            if (!string.IsNullOrEmpty(_settingsService.UserIdSetting) &&
-                !string.IsNullOrEmpty(_settingsService.MachineIdSettings)
-                && _selectedOrder != null && _selectedPhase != null)
+            if (await _connectionService.CheckConnection())
             {
-                var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
-                if (!machine.Active)
+                
+                if (!string.IsNullOrEmpty(_settingsService.UserIdSetting) &&
+                    !string.IsNullOrEmpty(_settingsService.MachineIdSettings)
+                    && _selectedOrder != null && _selectedPhase != null)
                 {
-                    if (machine.Descriere == "MANICHINO")
+                    var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
+                    if (!machine.Active)
                     {
-                       bool issaved= await SaveJob();
-                        if (issaved)  await _navigationService.NavigateToAsync<StartManichinoViewModel>();
-                        // await _navigationService.NavigateToAsync<ManichinoViewModel>();
-                        else return;
-                        dialog.Hide();
+                        if (machine.Descriere == "MANICHINO")
+                        {
+                            bool issaved = await SaveJob();
+                            if (issaved) await _navigationService.NavigateToAsync<StartManichinoViewModel>();
+                            // await _navigationService.NavigateToAsync<ManichinoViewModel>();
+                            else return;
+                            dialog.Hide();
+                        }
+                        else
+                        {
+                            bool issaved = await SaveJob();
+                            if (issaved) await _navigationService.NavigateToAsync<StartJobViewModel>();
+                            else return;
+                            // await _navigationService.NavigateToAsync<JobViewModel>();
+                            dialog.Hide();
+                        }
                     }
                     else
                     {
-                        bool issaved = await SaveJob();
-                        if (issaved) await _navigationService.NavigateToAsync<StartJobViewModel>();
-                        else return;
-                        // await _navigationService.NavigateToAsync<JobViewModel>();
                         dialog.Hide();
+                        await _dialogService.ShowDialog(
+                            $"Machine {machine.CodeAndName} is already taken.\nPlease select another machine or contact your superior.",
+                            "Warning", "OK");
                     }
                 }
                 else
                 {
                     dialog.Hide();
-                    await _dialogService.ShowDialog(
-                        $"Machine {machine.CodeAndName} is already taken.\nPlease select another machine or contact your superior.",
-                        "Warning", "OK");
+                    await _dialogService.ShowDialog("Please select all fields and then continue.", "Empty fields", "OK");
                 }
             }
             else
             {
+                await _dialogService.ShowDialog(
+                    "Connection problem please connect your device to WIFI and try again.",
+                    "Internet connection problem",
+                    "OK");
                 dialog.Hide();
-                await _dialogService.ShowDialog("Please select all fields and then continue.", "Empty fields", "OK");
             }
         }
+            
         private async void OnScanCommand(object obj)
         {
             await _navigationService.NavigateToAsync<ScannerViewModel>();

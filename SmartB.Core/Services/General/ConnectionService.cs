@@ -23,7 +23,8 @@ namespace SmartB.Core.Services.General
         public bool IsConnected => _connectivity.IsConnected;
         public async Task<bool> CheckConnection()
         {
-            return await _connectivity.IsReachable("http://192.168.96.14:61382/api/article/233");
+            var connected = await _connectivity.IsRemoteReachable("http://192.168.96.37", 47003);
+            return connected;//await 
         }
         public event ConnectivityChangedEventHandler ConnectivityChanged;
     }

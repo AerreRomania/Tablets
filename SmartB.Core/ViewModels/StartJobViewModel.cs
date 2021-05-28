@@ -30,23 +30,53 @@ namespace SmartB.Core.ViewModels
         public string Order => _settingsService.CommessaFromBarcode;
         private async void OnCancelJobCommand()
         {
-            await CloseJob();
+            var dialog = _dialogService.ShowProgressDialog("Please wait...");
+            dialog.Show();
+            if (await _connectionService.CheckConnection())
+            {
+               
+                await CloseJob();
+                dialog.Hide();
+            }
+            else
+            {
+                await _dialogService.ShowDialog(
+                    "Connection problem please connect your device to WIFI and try again.",
+                    "Internet connection problem",
+                    "OK");
+                dialog.Hide();
+            }
         }
         private async void OnStartJobCommand()
         {
-            await FirstWrite();
+            var dialog = _dialogService.ShowProgressDialog("Please wait...");
+            dialog.Show();
+            if (await _connectionService.CheckConnection())
+            {
+               
+                await FirstWrite();
+                dialog.Hide();
+            }
+            else
+            {
+                await _dialogService.ShowDialog(
+                    "Connection problem please connect your device to WIFI and try again.",
+                    "Internet connection problem",
+                    "OK");
+                dialog.Hide();
+            }
         }
         private async Task FirstWrite()
         {
             try
             {
+               
                 if(_settingsService.UserLineSettings != _settingsService.MachineLineSettings)
                 {
                     await _dialogService.ShowDialog("You can work only in your line.", "Warning", "OK");
                     return;
                 }
-                var dialog = _dialogService.ShowProgressDialog("Please wait...");
-                dialog.Show();
+                
                 var currentTime = await _jobDataService.GetServerDateTime();
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
                 var jobId = _settingsService.JobIdSettings;
@@ -60,8 +90,9 @@ namespace SmartB.Core.ViewModels
                 };
                 await _masiniService.UpdateMachineActivity(machineToUpdate,machineToUpdate.Id);
                 await _jobDataService.UpdateJob(jobId, job);
-                dialog.Hide();
+                
                 await _navigationService.NavigateToAsync<JobViewModel>();
+               
             }
             catch (Exception e)
             {
@@ -72,8 +103,7 @@ namespace SmartB.Core.ViewModels
         {
             try
             {
-                var dialog = _dialogService.ShowProgressDialog("Please wait...");
-                dialog.Show();
+                
                 var job = await _jobDataService.GetJob(_settingsService.JobIdSettings);
                 var machine = await _masiniService.GetMachineAsync(_settingsService.MachineIdSettings);
                 var currentTime = await _jobDataService.GetServerDateTime();
@@ -105,7 +135,7 @@ namespace SmartB.Core.ViewModels
                 _settingsService.TotalEfficiencySettings = null;
                 _settingsService.SelectedPhaseSettings = null;
                 _settingsService.LastClickSetting = null;
-                dialog.Hide();
+               
                 await _navigationService.NavigateBackAsync();
             }
             catch (Exception e)
